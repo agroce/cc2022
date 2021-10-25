@@ -417,7 +417,71 @@ bibsource = {DBLP, http://dblp.uni-trier.de}
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {multi-language tools, mutation testing, regular expressions},
-} 
+}
+
+@ARTICLE {ArtFuzz,
+author = {V. Manes and H. Han and C. Han and s. cha and M. Egele and E. J. Schwartz and M. Woo},
+journal = {IEEE Transactions on Software Engineering},
+title = {The Art, Science, and Engineering of Fuzzing: A Survey},
+year = {5555},
+volume = {},
+number = {01},
+issn = {1939-3520},
+pages = {1-1},
+keywords = {fuzzing;security;computer bugs;terminology},
+doi = {10.1109/TSE.2019.2946563},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month = {oct}
+}
+
+@INPROCEEDINGS{MutFacebook,
+  author={Beller, Moritz and Wong, Chu-Pan and Bader, Johannes and Scott, Andrew and Machalica, Mateusz and Chandra, Satish and Meijer, Erik},
+  booktitle={2021 IEEE/ACM 43rd International Conference on Software Engineering: Software Engineering in Practice (ICSE-SEIP)}, 
+  title={What It Would Take to Use Mutation Testing in Industry—A Study at Facebook}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={268-277},
+  doi={10.1109/ICSE-SEIP52600.2021.00036}}
+
+@inproceedings{MutGoogle,
+author = {Petrovi\'{c}, Goran and Ivankovi\'{c}, Marko},
+title = {State of Mutation Testing at Google},
+year = {2018},
+isbn = {9781450356596},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3183519.3183521},
+doi = {10.1145/3183519.3183521},
+abstract = {Mutation testing assesses test suite efficacy by inserting small faults into programs
+and measuring the ability of the test suite to detect them. It is widely considered
+the strongest test criterion in terms of finding the most faults and it subsumes a
+number of other coverage criteria. Traditional mutation analysis is computationally
+prohibitive which hinders its adoption as an industry standard. In order to alleviate
+the computational issues, we present a diff-based probabilistic approach to mutation
+analysis that drastically reduces the number of mutants by omitting lines of code
+without statement coverage and lines that are determined to be uninteresting - we
+dub these arid lines. Furthermore, by reducing the number of mutants and carefully
+selecting only the most interesting ones we make it easier for humans to understand
+and evaluate the result of mutation analysis. We propose a heuristic for judging whether
+a node is arid or not, conditioned on the programming language. We focus on a code-review
+based approach and consider the effects of surfacing mutation results on developer
+attention. The described system is used by 6,000 engineers in Google on all code changes
+they author or review, affecting in total more than 13,000 code authors as part of
+the mandatory code review process. The system processes about 30% of all diffs across
+Google that have statement coverage calculated. About 15% of coverage statement calculations
+fail across Google.},
+booktitle = {Proceedings of the 40th International Conference on Software Engineering: Software Engineering in Practice},
+pages = {163–171},
+numpages = {9},
+location = {Gothenburg, Sweden},
+series = {ICSE-SEIP '18}
+}
+
+
+
+
 
 
 @incollection{MutationSurvey,
@@ -598,6 +662,14 @@ number = {6},
   pages={390--399},
   year={2013},
   organization={IEEE}
+}
+
+@inproceedings{csmith,
+  title={Finding and understanding bugs in C compilers},
+  author={Yang, Xuejun and Chen, Yang and Eide, Eric and Regehr, John},
+  booktitle={Proceedings of the 32nd ACM SIGPLAN conference on Programming language design and implementation},
+  pages={283--294},
+  year={2011}
 }
 
 @inproceedings{ASE08,
