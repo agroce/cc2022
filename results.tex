@@ -1,4 +1,27 @@
-\section{Big ol' table}
+\section{Evaluation}
+
+
+\subsection{Setup}
+
+\noindent 
+\textbf{Corpus.} For solidity, all \texttt{.sol} files in
+\texttt{test/libsolidity}. For Move, all \texttt{.diem} files in the
+repository. For \texttt{Fe}, {\color{red} all \texttt{.fe} files in
+repository}. AFL starts of preprocessing inputs based on coverage and ignores uninteresting ones. {\color{red} say how many for each proj}
+
+For the template splicing technique, we start off with a noop input and
+gradually generate \texttt{(template, fragment)} pairs, synthesized on-demand.
+After generating pairs,wWe removed all large inputs in the \texttt{(template, fragment)} corpus (> 4KB). {\color{red} say how many of these}.
+
+% Data lives here:
+% Solidity: /home/rijnard/0-experiments-feb/sol-programs                         @ 686b62b585d686f08fe2f8d586b8474c133dce2f + cherry-pick
+%           /home/rijnard/0-experiments-feb/comby-mutation-server/fragments
+% Move:     /home/rijnard/0-experiments-feb/move-programs                        @ bfb6b09715894b3c436919bf2e718b6ae0fcba9f (double check)
+%           /home/rijnard/0-experiments-feb/comby-mutation-server-move/fragments
+% FE        /home/rijnard/0-experiments-feb/fe-programs                          @ 1ea2206e3d10e77163f1a01bee05088358d8ef23
+%           /home/rijnard/0-experiments-feb/comby-mutation-server-fe/fragments
+
+
 
 
 \begin{table*}
