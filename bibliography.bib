@@ -401,6 +401,17 @@ ee        = {http://doi.acm.org/10.1145/351240.351266},
 bibsource = {DBLP, http://dblp.uni-trier.de}
 }
 
+@article{chen2020survey,
+  title={A survey of compiler testing},
+  author={Chen, Junjie and Patra, Jibesh and Pradel, Michael and Xiong, Yingfei and Zhang, Hongyu and Hao, Dan and Zhang, Lu},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={53},
+  number={1},
+  pages={1--36},
+  year={2020},
+  publisher={ACM New York, NY, USA}
+}
+
 @inproceedings{regexpMut,
  author = {Groce, Alex and Holmes, Josie and Marinov, Darko and Shi, August and Zhang, Lingming},
  title = {An Extensible, Regular-expression-based Tool for Multi-language Mutant Generation},
@@ -1235,6 +1246,41 @@ pages = {12--17}
   howpublished = "\url{http://www.liquidity-lang.org/doc/reference/michelson.html}",
   year={Accessed on Jan 10, 2019}
 }
+
+@inbook{CompBug,
+  author = "Scott Bauer and Pascal Cuoq and John Regehr",
+  title = "POC||GTFO",
+  chapter = "Compiler Bug Backdoors",
+  publisher = "No Starch Press",
+  year = 2017
+  }
+
+@inproceedings{LangFuzz,
+author = {Holler, Christian and Herzig, Kim and Zeller, Andreas},
+title = {Fuzzing with Code Fragments},
+year = {2012},
+publisher = {USENIX Association},
+address = {USA},
+abstract = {Fuzz testing is an automated technique providing random data as input to a software
+system in the hope to expose a vulnerability. In order to be effective, the fuzzed
+input must be common enough to pass elementary consistency checks; a JavaScript interpreter,
+for instance, would only accept a semantically valid program. On the other hand, the
+fuzzed input must be uncommon enough to trigger exceptional behavior, such as a crash
+of the interpreter. The LangFuzz approach resolves this conflict by using a grammar
+to randomly generate valid programs; the code fragments, however, partially stem from
+programs known to have caused invalid behavior before. LangFuzz is an effective tool
+for security testing: Applied on the Mozilla JavaScript interpreter, it discovered
+a total of 105 new severe vulnerabilities within three months of operation (and thus
+became one of the top security bug bounty collectors within this period); applied
+on the PHP interpreter, it discovered 18 new defects causing crashes.},
+booktitle = {Proceedings of the 21st USENIX Conference on Security Symposium},
+pages = {38},
+numpages = {1},
+location = {Bellevue, WA},
+series = {Security'12}
+}
+
+
 
 @article{Differential,
 author = "William McKeeman",
