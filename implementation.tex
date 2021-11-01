@@ -1,7 +1,186 @@
 \section{Implementation and Example Operations}
 
+The heart of the implementation is to add a set of mutation operators
+to the repertoire of changes that a mutation-based fuzzer can apply to
+an input.  There is a large literature on the selection of mutation
+operators to apply, but this literature focuses on identifying
+operators that help find holes in a testing effort.  There is no
+reason to believe that this is particularly indicative of the
+operators that will be most useful in fuzzing.  We therefore simply
+used a large number of operators that apply to a wide variety of
+programming languages, based on the set of operators provided by the
+Universal Mutator tool, ignoring any highly-language-specific operators.
+
 \subsection{Fast or Smart?}
+
+More important than the selection of the best mutation operators
+(which will likely vary considerably by target compiler) is a
+fundamental decision.  A mutation testing tool can be highly intelligent, only
+applying operators in ways that should produce compiling code, based
+on a parse of the program to be mutated.  Or, like the universal
+mutator, it can be ``dumb'' and apply rules without expensive analysis
+of the code, trusting the compiler to prune the resulting invalid
+mutants.  Which approach is best for fuzzing is not obvious: on the
+one hand, all fuzzing (including generative) relies on executing very
+large numbers of inputs; most ``random'' inputs will be uninteresting,
+neither exposing a bug nor novel behavior to drive further
+exploration.  Fuzzer throughput is a critical factor, and a ``dumb''
+mutation strategy can produce modified inputs much more rapidly than a
+``smart'' approach that must parse the input.  On the other hand, if a
+shallower analysis during mutation production greatly decreases the
+probability that the mutated inputs will expose bugs or new behavior,
+the result is, effectively, slower fuzzing.  If adding a parsing stage
+makes mutation generation take twice as long, but more than doubles
+the probability the input generated will be useful, it will be a net
+gain for in-practice fuzzing throughput.
+
+Of course, at first
+glance, it would appear that  ``smart'' strategies are not even
+possible in our context: there will often not be a parser that the
+mutation tool could use.  However, as we discuss below, recent work on
+multi-language syntax transformation enables an approach that can use
+\emph{syntax fragments} to provide a significant degree of intelligent
+mutation without specialized parsers for a compiler's input language,
+at the cost of additonal time required to generate each mutation.
 
 \subsubsection{Fast String-level Approximation of Mutation Operators}
 
+\begin{figure}
+{\scriptsize
+  \begin{code}
+case 0: /* Semantic statement deletion */
+    strncpy(original, "\\n", MAX\_MUTANT\_CHANGE);
+    strncpy(replacement, "\\nif (0==1)\\n", MAX\_MUTANT\_CHANGE);
+    break;
+case 1:
+    strncpy(original, "(", MAX\_MUTANT\_CHANGE);
+    strncpy(replacement, "(!", MAX\_MUTANT\_CHANGE);
+    break;
+case 2:
+    strncpy(original, "==", MAX\_MUTANT\_CHANGE);
+    strncpy(replacement, "!=", MAX\_MUTANT\_CHANGE);
+    break;
+$\ldots$
+case 53: /* Swap comma delimited things case 4 */
+   delim\_swap(out\_buf, temp\_len, \&original, \&replacement, pos,
+                         ",", ",", ")");
+    break;
+case 54: /* Just delete a line */
+    delim\_replace(out\_buf, temp\_len, \&original, \&replacement,
+                             pos, "\\n", "\\n", "");
+    break;
+case 55: /* Delete something like "const" case 1 */
+    delim\_replace(out\_buf, temp\_len, \&original, \&replacement,
+                             pos, " ", " ", "");
+    break;    
+ \end{code}
+    }
+ \caption{Part of the Fast String-Based Approximation of Mutation
+   Operators}
+     \label{fig:foperators}
+
+\end{figure}
+
+The core implementation of our technique is a text-based approximation
+of the regular expression based approach taken by the universal
+mutator.  Rather than call the mutation tool, which is written in
+Python and relatively slow, we hand-crafted, using low-level C string
+libraries, approximations of the mutation operators for all languages
+(the ``universal'' rules from the universal mutator) and those for
+``C-like'' languages.  Figure \ref{fig:foperators} shows part of the
+implementation.  Most operators are implemented by choosing a string
+to find and a string to repalce it with; the mutator finds a random
+occurrence of the {\tt original} string and replaces it with the {\tt
+  replacement} string.  Other operators require more involved string
+manipulation, e.g., removing a semicolon-delimited statement, or
+swapping function arguments.  Critically, however, all operations
+involve only basic C string operations, and no more than 4 linear
+scans of the entire text to be mutated.  The vast majority of operations require no
+more than one linear scan in the worst case.  When an operation that
+is chosen cannot be applied (e.g., the string to be replaced is not
+present), another operation is attempted, up to a maximum number of
+tries.
+
+This approach is, as stated, fast.  While slower than many built-in
+AFL mutations (obviously searching for strings is slower than flipping
+a randomly chosen bit, or incrementing a byte value), it has a fairly
+low upper bound on worst-case runtime.  The time required is much
+closer to AFL's built in mutations than to techniques such as
+solving constraints, even a linear
+approximation~\cite{Eclipser}.  Figure \ref{fig:fopexample} shows some
+sample transformations of inputs using this approach.  Notice that
+some of the mutations tend to delete code, potentially large amounts
+of code.  This is critical for enabling the fuzzer engine to splice
+together interesting inputs, in that the larger two inputs are, the
+more likely they will have, e.g., namespace conflicts that prevent
+merging them.
+
+\begin{figure}
+  \raggedright
+  {\scriptsize
+    {\bf Original code:}
+\begin{code}
+$\ldots$      
+ int bar(int x, int y, int z) \{
+   if (x < y)
+      return foo(x, y, z);
+   while (x < y) \{
+      x++;
+      z = z * 2;
+   \}
+\}
+\end{code}
+   {\bf Mutant 1:}
+\begin{code}
+$\ldots$      
+   if (x == y)
+      return foo(x, y, z);
+\end{code}
+   {\bf Mutant 2:}
+\begin{code}
+$\ldots$      
+   if (x < y)
+      return foo(x, z, y);
+\end{code}
+   {\bf Mutant 3:}
+\begin{code}
+$\ldots$      
+   while (x < y) \{
+      x++;
+      break;
+    \end{code}
+   {\bf Mutant 4:}
+\begin{code}
+$\ldots$      
+   while (x < y) \{
+   \}
+ \end{code}
+ {\bf Mutant 5:}
+\begin{code}
+$\ldots$      
+   while (x < y) \{
+     x++;
+   \}
+ \end{code}
+
+}
+\caption{Mutations of  Simple Code}
+\label{fig:fopexample}
+\end{figure}
+
 \subsubsection{Parser Parser Combinator-Based Intelligent Mutation}
+
+\subsubsection{P(havoc) + P(text) + P(splice) = 1}
+
+Our full implementation is based on Google's released code for the AFL
+fuzzer, and available as an open source tool (that, to date, has 68
+stars on GitHub and has been forked 7 times)\footnote{Link omitted for
+  blinding.}.  The main change to AFL is the addition of code such as that shown in
+Figure~\ref{fig:foperators}.  The new version (the ``AFL compiler
+fuzzer'') also can call out to {\tt comby} to generate mutants.  Two
+new command line parameters to AFL control the use of these features:
+{\tt -1} determines the probability to generate a mutant using the
+fast C string implementation (with a default value of 75\%), and {\tt -2} determines the probability
+to call {\tt comby} to generate a mutant (with a default value of
+0\%).  If these two parameters add up to less than 100\%, the
+remainder of the time the usual AFL havoc mutation operators are applied.
