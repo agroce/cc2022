@@ -22,8 +22,6 @@ After generating pairs,wWe removed all large inputs in the \texttt{(template, fr
 %           /home/rijnard/0-experiments-feb/comby-mutation-server-fe/fragments
 
 
-
-
 \begin{table*}
 \centering
 \begin{tabular}{llrrrrrr}
@@ -31,20 +29,27 @@ After generating pairs,wWe removed all large inputs in the \texttt{(template, fr
                     \bf Project      & \bf Configuration                           & \mc{3}{c}{\bf Unique Bugs}        & \bf Avg Execs  & \bf Avg Paths    & \bf Avg Bitmap     \\
                                      &                                             & Avg     & Min       & Max         & (Millions)     & (K)              & Cvg (\%)           \\
 \midrule
-                    \mr{3}{Solidity} & \tt \small      ground-truth                & 3.69    & 1         & 6           & 35.8           & 12.0             & 54.34              \\ 
-                                     & \tt \small      text-mutation               & 8.19    & 7         & 11          & 30.3           & 14.3             & 55.65              \\ 
-                                     & \tt \small      splice-mutation             & 9.47    & 7         & 13          & 16.0           & 16.8             & 57.33              \\ 
+                    \mr{4}{Solidity} & \tt \small      AFL-baseline                &  3.69   & 1         &  6          & 35.8           & 12.0             & 54.34              \\ 
+                                     & \tt \small      AFL++ 3.15a                 &  5.63   & 1         & 10          & 56.9           &  8.8             & 20.58              \\ 
+                                     & \tt \small      text-mutation               &  7.81   & 7         & 11          & 30.3           & 14.3             & 55.65              \\ 
+                                     & \tt \small      splice-mutation             & 11.81   & 7         & 14          & 16.0           & 16.8             & 57.33              \\ 
 \midrule
-                    \mr{3}{Move}     & \tt \small      ground-truth                & ????    & ?         & ??          & 56.9           & 4.9              & 63.23              \\ 
-                                     & \tt \small      text-mutation               & ????    & ?         & ??          & 61.2           & 6.0              & 62.27              \\ 
-                                     & \tt \small      splice-mutation             & ????    & ?         & ??          &  7.2           & 5.0              & 63.18              \\ 
+                    \mr{4}{Move}     & \tt \small      AFL-basline                 & 7.19    & 6         & 8           & 56.9           & 4.9              & 63.23              \\ 
+                                     & \tt \small      AFL++                       & ????    & ?         & ?           & ????           & ???              & ?????              \\ 
+                                     & \tt \small      text-mutation               & 8.31    & 7         & 9           & 61.2           & 6.0              & 62.27              \\ 
+                                     & \tt \small      splice-mutation             & 6.06    & 5         & 7           &  7.2           & 5.0              & 63.18              \\ 
 \midrule
-                    \mr{3}{Zig}      & \tt \small      ground-truth                & ????    & ?         & ??          & ????           & ???              & ?????              \\ 
+                    \mr{4}{Fe}       & \tt \small      AFL-baseline                & ????    & ?         & ?           & 24.5           & 3.5              & 27.91              \\ 
+                                     & \tt \small      AFL++ 2.64c                 & ????    & ?         & ?           & 22.6           & 3.4              & 27.76              \\ 
+                                     & \tt \small      text-mutation               & ????    & ?         & ?           & 17.9           & 3.3              & 27.84              \\ 
+                                     & \tt \small      splice-mutation             & ????    & ?         & ?           &  5.0           & 2.6              & 27.83              \\ 
+\midrule
+                    \mr{3}{Zig}      & \tt \small      AFL-baseline                & ????    & ?         & ??          & ????           & ???              & ?????              \\ 
                                      & \tt \small      text-mutation               & ????    & ?         & ??          & ????           & ???              & ?????              \\ 
                                      & \tt \small      splice-mutation             & ????    & ?         & ??          & ????           & ???              & ?????              \\ 
 \bottomrule
 \end{tabular} 
-\caption{Main results. We fuzzed each project for 16 trials (24 hours per trial) in three different configurations: \texttt{ground-truth}, \texttt{text-mutation}, and \texttt{splice-mutation}.
-\texttt{ground-truth} is stock \texttt{AFL}. \texttt{text-mutation} applies mutation operators (textual find-replace patterns) with a probability of 75\% on every fuzzed input. Sock AFL manipulates the input witht the remainder, 25\% of the time. \texttt{splice-mutation} is a hybrid approach that (1) applies mutation operators as in \texttt{text-mutation} with probability 33\%; (2) synthesizes a syntax-aware input with template (splice) 33\% of the time, and (3) uses stock AFL for the remainding 34\%. {\color{red} TODO: summarize results once flush.}}
+        \caption{Main results. We fuzzed each project for 16 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AF++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
+\texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a community-driven effort that enhances stock AFL. \texttt{text-mutation} applies mutation operators (textual find-replace patterns) with a probability of 75\% on every fuzzed input. Sock AFL manipulates the input witht the remainder, 25\% of the time. \texttt{splice-mutation} is a hybrid approach that (1) applies mutation operators as in \texttt{text-mutation} with probability 33\%; (2) synthesizes a syntax-aware input with template (splice) 33\% of the time, and (3) uses stock AFL for the remainding 34\%. {\color{red} TODO: summarize results once flush.}}
 \label{tab:results}
 \end{table*}
