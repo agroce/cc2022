@@ -41,9 +41,10 @@ mutation tool could use.  However, as we discuss below, recent work on
 multi-language syntax transformation enables an approach that can use
 \emph{syntax fragments} to provide a significant degree of intelligent
 mutation without specialized parsers for a compiler's input language,
-at the cost of additonal time required to generate each mutation.
+at the cost of additonal time required to synthesize inputs.
 
 \subsubsection{Fast String-level Approximation of Mutation Operators}
+\label{fast-string-level}
 
 \begin{figure}
 {\scriptsize
@@ -110,8 +111,8 @@ solving constraints, even a linear
 approximation~\cite{Eclipser}.  Figure \ref{fig:fopexample} shows some
 sample transformations of inputs using this approach.  Notice that
 some of the mutations tend to delete code, potentially large amounts
-of code.  This is critical for enabling the fuzzer engine to splice
-together interesting inputs, in that the larger two inputs are, the
+of code.  This is critical for enabling the fuzzer engine to compose
+interesting inputs, in that the larger two inputs are, the
 more likely they will have, e.g., namespace conflicts that prevent
 merging them.
 
@@ -168,11 +169,117 @@ $\ldots$
 \label{fig:fopexample}
 \end{figure}
 
-\subsubsection{Syntax-Aware Mutation}
+\subsubsection{Smart Syntax-Aware Mutation}
 
-Tradeoff.
+Our core approach enables fast mutation written in C that we added directly in
+AFL's fuzzing hot loop. Our early success with this method prompted us to
+augment AFL further with even smarter mutations to find more bugs more quickly.
+The intuition behind these smarter mutations is to manipulate (typically
+larger) code fragments that are likely to be syntactically valid and yet
+trigger deeper buggy properties (past compiler parsing). Unlike transformtions
+in the core approach that approximate syntactically valid transformations on
+strings or lines, syntax-aware transformations seek to accurately modify syntax
+in well-parenthesized expressions or entire multiline code blocks (e.g.,
+function or \texttt{for}-loop bodies). In general, manipulating a program's
+parse tree like this imposes exactly the kind of burden and complexity that
+small compiler projects can't support (defining a precise grammar, keeping
+tooling up to date as the grammar evolves). Even with multiyear investment in
+tools (like Csmith), effort necessarily goes into deeper focus on
+language-specific properties and semantics %, rather than broad, language-general approaches.
+that may not generalize to other compilers.
 
-Splicing.
+Our approach combats this cost by using the
+\texttt{Comby}\footnote{\href{https://comby.dev}{https://comby.dev}} tool to do
+syntax-aware code matching and transformation. \texttt{Comby} works by coarsely
+parsing a program, taking care to correctly interpret nested syntax of code
+(parentheses and braces), and avoids conflating this syntax with strings and
+comments like regular expressions would.  \texttt{Comby} is not a fully-fledged
+parser for any language, but it \emph{is} language-aware, in that it recognizes
+a small set of language-specific constructs (e.g., syntax to identify quoted
+strings or comments) to accurately parse code blocks. \texttt{Comby} supports
+over 50 languages and uses a generic parser yet-unsupported ones like custom
+DSLs.
+
+\texttt{Comby} does not have C bindings, so we expose its transformation
+abilities as a server to our AFL fuzzer. We implemented a minimal HTTP client
+in the fuzzer's hot loop to request inputs. We use the \texttt{Comby} server in
+a mutation mode where it \emph{generates} inputs from a decomposition of
+\emph{templates} and \emph{concrete fragments} obtained from the initial corpus
+of programs. We first preprocess all programs in the initial corpus to obtain
+this decomposition. For example, given the input program:
+
+\begin{figure}[ht!]
+\begin{code}
+function f(uint256 arg) public \{
+    f(notfound);
+\}
+\end{code}
+\end{figure}
+
+We obtain three templates by substituting expressions inside well-nested parentheses and blocks with a placeholder \texttt{\$1}:
+
+
+% https://github.com/rvantonder/compiler-fuzzer-experiments/blob/main/new/comby-mutation-server-on-sol-programs/templates/003_undeclared_name_is_not_fatal.389ddb46-000b-4577-8035-51b04b5a77c7.template.sol
+\begin{figure}[ht!]
+\begin{code}
+function f(uint256 arg) public \{\$1\} 
+\end{code}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{code}
+function f(\$1) public \{
+    f(notfound);
+\} 
+\end{code}
+\end{figure}
+
+\begin{figure}[ht!]
+\begin{code}
+function f(uint256 arg) public \{
+    f(\$1);
+\} 
+\end{code}
+\end{figure}
+
+And three corresponding concrete fragments that are substituted for:
+
+\begin{figure}[ht!]
+\begin{code}
+uint256 arg
+f(notfound);
+notfound
+\end{code}
+\end{figure}
+
+The decomposition is itself done by \texttt{Comby}, which extracts concrete
+values inside parentheses, braces, and square brackets (patterns
+\texttt{(\$expr)}, \texttt{\{\$expr\}}, \texttt{[\$expr]} respectively). Note
+that our approach can be customized to extract \emph{any} kind of syntactically
+significant pattern correspondingly decompose the input program; we simply
+chose syntax that commonly delineates code blocks and expressions (i.e.,
+parentheses and braces) since these exhibit interesting properties that
+preserve structure (multiline statements, well-formed expressions) that go
+beyond what string-level mutations identify.
+
+
+We perform this decomposition for all programs in the corpus to obtain
+templates and concrete fragments, which we then deduplicate. Once fuzzing, the
+server generates an input program by selecting, uniformly at random, a template
+and up to 10 program fragments and then substitutes all locations in the
+template with program fragments. In essence, the server splices new inputs that
+are likely to compose syntactically well-formed programs.
+
+In addition to generating inputs, the server can also apply syntax-aware
+\texttt{Comby} transformation rules, analogous to string-level mutation
+operators. In practice, our server architecture adds considerable overhead (we
+discuss in Evaluation) that is slow in applying on-the-fly mutations, and less
+appealing than string-level mutation in Section~\ref{fast-string-level}. Our
+results in Section~\ref{eval} \emph{do} show, however, that generative
+syntax-aware input manipulation demonstrates compelling utility despite
+incurring significant slowdown.\footnote{We are actively improving the tooling
+architecture, which is generally a matter of engineering rather than
+limitations on the inherent merits of our approach.}
 
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}
 
