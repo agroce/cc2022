@@ -2,6 +2,36 @@
 
 {\bf WE NEED A NICE TABLE OF BUG CATEGORIES FOR ALL THE CAMPAIGNS WE RAN, INCLUDING CAMPAIGN LENGTH}
 
+
+\begin{table}
+\centering
+\begin{tabular}{lrr|rrrr}
+\toprule
+                    \bf Project       & \bf Length & \bf Total        & \cmark            & \clock          & \acirc  & \xmark   \\
+\midrule
+%                                                                       . Need Alex's count for Solidity, Rijnard has two fixed bugs for Solidity.
+                    Solidity          &            &                  & 2 + ??            & ??              & ??      & ??       \\
+                    Move              & ???        & 14               & 12                & 2               & 0       & 0        \\
+                    Fe                &            &                  &                   &                 &         &          \\
+                    Zig               & ???        & 2                & 0                 & 2               & 0       & 0        \\
+\midrule
+                    All               & ???        & 16               & 14                & 4               & 0       & 0        \\
+\bottomrule
+\end{tabular}
+\caption{Fuzzing campaign results for real world bugs.
+Table shows all reported bugs to project's upstream issue
+tracker and status.  \cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed but unfixed bugs}. 
+\acirc~is \textbf{duplicate bug reports} (either reported
+duplicatively by us or another contributor).  \xmark~is \textbf{invalid} bug
+reports (deemed not a real bug, i.e., WONTFIX). \textbf{Total bugs} is the
+number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fixed + \clock~Unfixed bugs).
+{\color{red} Table to include Alex's bugs still.} 
+{\color{red} Alex to answer: what do want to put for "campaign length" here? Fuzz time, or time span of bug reports? Or both (and we add a column)?}
+}
+\label{tab:campaign-fixes}
+\end{table}
+
+
 Perhaps the most important evidence of the effectiveness of this approach is that we applied it to fuzzing the Solidity compiler for over a year, and in that time reported XX bugs that have been fixed.  Prior to and during our campaign, Solidity had been fuzzed heavily using AFL, by the developers and by external contributors.  Despite competing with the internal fuzzing team of the project and other developers, and never devoting more resources to the fuzzing than 3-4 docker container hosted instances of our fuzzing tool, running on a high-end laptop, we believe that our campaign was the largest single source of fuzzing-discovered bugs in the compiler during our campaign.  The campaign was awarded a security bounty of \$1,000 USD in Ethereum for discovery of a bug with potential security implications (and, it was noted, for the general effectiveness of the fuzzing), and the Solidity team encouraged and aided our efforts, once it was clear that the approach was very useful in exposing subtle bugs.
 
 A second long-term fuzzing effort was directed at the Fe language, a Rust/Python-like alternative to Solidity for writing Ethereum contracts.  Fe is an experimental language, and the project has far fewer resources than Solidity to devote to testing.  We worked with the Fe developers to make Fe crash in additional cases, and were able to provide them with high-quality fuzzing very early in the lifetime of an experimental compiler project.  We believe this effort was very useful to the Fe team, based on their comments, and speculate that better ``no-fuss'' fuzzing could expose language corner cases early in the implementation of a compiler, avoiding costly changes when more code depends on erroneous assumptions, or poor language design choices.
