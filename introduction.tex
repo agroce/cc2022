@@ -39,7 +39,7 @@ existing Solidity programs and randomly modifying them.
 
 This approach (randomly mutating existing programs) is widely used by
 real-world compiler projects in part because \emph{it is often very easy to
-  apply}: we call if ``no fuss'' compiler fuzzing.  Most compiler projects, even large ones, do not have a team
+  apply}: we call it ``no fuss'' compiler fuzzing.  Most compiler projects, even large ones, do not have a team
 of random testing experts available, so the construction of
 Csmith-like tools is out of the question.  This means that the only
 way to generate valid programs \emph{from scratch} is to use a tool that takes as
@@ -61,7 +61,7 @@ recent paper, finding that many bugs could not be found using a
 grammar-based generator.
 Finally, a usable grammar may not be available, especially as the
 tools will expect a grammar in a particular format, and may add
-restrictions on the structure of the grammarr.  In the early stages,
+restrictions on the structure of the grammar.  In the early stages,
 many programming language projects lack a stable, well-defined
 grammar in any formal, standalone, notation.  An ad-hoc ``grammar'' used by the compiler implementation may be the
 only grammar around.  Thus, while grammar-based compiler

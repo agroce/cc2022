@@ -101,7 +101,7 @@ is chosen cannot be applied (e.g., the string to be replaced is not
 present), another operation is attempted, up to a maximum number of
 tries.
 
-This approach is, as stated, fast.  While slower than many built-in
+This approach is, as stated, is fast.  While slower than many built-in
 AFL mutations (obviously searching for strings is slower than flipping
 a randomly chosen bit, or incrementing a byte value), it has a fairly
 low upper bound on worst-case runtime.  The time required is much
@@ -168,16 +168,20 @@ $\ldots$
 \label{fig:fopexample}
 \end{figure}
 
-\subsubsection{Parser Parser Combinator-Based Intelligent Mutation}
+\subsubsection{Syntax-Aware Mutation}
+
+Tradeoff.
+
+Splicing.
 
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}
 
 Our full implementation is based on Google's released code for the AFL
 fuzzer, and available as an open source tool (that, to date, has 68
-stars on GitHub and has been forked 7 times)\footnote{Link omitted for
-  blinding.}.  The main change to AFL is the addition of code such as that shown in
+stars on GitHub and has been forked 7 times).\footnote{Link omitted for
+  blinding.}  The main change to AFL is the addition of code such as that shown in
 Figure~\ref{fig:foperators}.  The new version (the ``AFL compiler
-fuzzer'') also can call out to {\tt comby} to generate mutants.  Two
+fuzzer'') can also call out to {\tt comby} to generate mutants.  Two
 new command line parameters to AFL control the use of these features:
 {\tt -1} determines the probability to generate a mutant using the
 fast C string implementation (with a default value of 75\%), and {\tt -2} determines the probability
