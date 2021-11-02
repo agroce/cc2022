@@ -31,6 +31,29 @@ number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fix
 \label{tab:campaign-fixes}
 \end{table}
 
+\begin{table*}
+\centering
+\begin{tabular}{lcll}
+\toprule
+                    \bf Project       & \bf Bug kind                  & \bf Ref                                                                                                         & \bf Time to fix   \\ 
+\midrule                               
+                    \mr{2}{Solidity}  &                               &                                                                                                                 &                   \\
+                                      &                               &                                                                                                                 &                   \\
+\cmidrule{2-4}                               
+                    \mr{3}{Move}      & incorrect struct type arity   & \href{https://github.com/diem/diem/pull/7401}{\#7401}                                                           & 1d                \\
+                                      & broken ref type constraint    & \href{https://github.com/diem/diem/pull/7613/commits/9af7ababb42c2d580869c4e697aa2321bc27bb98}{\#7613}          & 1d                \\
+                                      & ...                           &                                                                                                                 &                   \\
+\cmidrule{2-4}                               
+                    \mr{2}{Fe}        &                               &                                                                                                                 &                   \\
+                                      &                               &                                                                                                                 &                   \\
+\bottomrule
+\end{tabular}
+\caption{Detailed bug exemplars. \textbf{Time to fix} is the time taken from report to fix being merged.}
+\label{tab:bug-breakdown}
+\end{table*}
+
+
+
 
 Perhaps the most important evidence of the effectiveness of this approach is that we applied it to fuzzing the Solidity compiler for over a year, and in that time reported XX bugs that have been fixed.  Prior to and during our campaign, Solidity had been fuzzed heavily using AFL, by the developers and by external contributors.  Despite competing with the internal fuzzing team of the project and other developers, and never devoting more resources to the fuzzing than 3-4 docker container hosted instances of our fuzzing tool, running on a high-end laptop, we believe that our campaign was the largest single source of fuzzing-discovered bugs in the compiler during our campaign.  The campaign was awarded a security bounty of \$1,000 USD in Ethereum for discovery of a bug with potential security implications (and, it was noted, for the general effectiveness of the fuzzing), and the Solidity team encouraged and aided our efforts, once it was clear that the approach was very useful in exposing subtle bugs.
 
