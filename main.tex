@@ -33,6 +33,29 @@
 \usepackage{wasysym}
 \usepackage{pifont}
 
+%%%% NUMBERS %%%%
+
+%% SOLIDITY %%
+% Alex's reports
+\newcommand{\solASubmitted}{88}
+% all of the below are in terms of \solSubmitted
+\newcommand{\solAShouldCompile}{16}
+\newcommand{\solAValid}{75}
+\newcommand{\solAValidDuplicates}{9}
+\newcommand{\solANotValid}{7} % or unreproducible
+\newcommand{\solAUnconfirmed}{4}
+\newcommand{\solACurrentConfirmedUnfixed}{2}
+\newcommand{\solACurrentReportedNoVerdict}{1}
+
+%% Rijnard's reports
+\newcommand{\solRSubmitted}{2}
+\newcommand{\solRValid}{2}
+
+\newcommand{\solTotalReported}{90} % \solASubmitted + \solRSubmitted
+\newcommand{\solUniqueFixed}{68} % \solAValid (75) + \solRValid (2)  - solAValidDuplicates (9)
+\newcommand{\solUniqueConfirmed}{2} % \solACurrentConfirmedUnfixed (2). Still waiting on \solACurrentReportedNoVerdict (1) (or does this mean it's confirmed?)
+\newcommand{\solUniqueFixedOrConfirmed}{70} % \solUniqueFixed (68) + \solUniqueConfirmed (2)
+
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 \newcommand{\acirc}{\textbf{--}}

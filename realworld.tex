@@ -5,26 +5,25 @@
 
 \begin{table}
 \centering
-\begin{tabular}{lrr|rrrr}
+\begin{tabular}{lrr|rrr}
 \toprule
-                    \bf Project       & \bf Length & \bf Total        & \cmark            & \clock          & \acirc  & \xmark   \\
+                    \bf Project       & \bf Length & \bf Total                        & \cmark            & \clock                  & \acirc                 \\
 \midrule
-%                                                                       . Need Alex's count for Solidity, Rijnard has two fixed bugs for Solidity.
-                    Solidity          &            &                  & 2 + ??            & ??              & ??      & ??       \\
-                    Move              & ???        & 14               & 12                & 2               & 0       & 0        \\
-                    Fe                &            &                  &                   &                 &         &          \\
-                    Zig               & ???        & 2                & 0                 & 2               & 0       & 0        \\
+                    Solidity          &            & \solUniqueFixedOrConfirmed      & \solUniqueFixed   & \solUniqueConfirmed     & \solAValidDuplicates   \\
+                    Move              & ???        & 14                               & 12                & 2                       & 0                      \\
+                    Fe                &            &                                  &                   &                         &                        \\
+                    Zig               & ???        & 2                                & 0                 & 2                       & 0                      \\
 \midrule
-                    All               & ???        & 16               & 14                & 4               & 0       & 0        \\
+                    All               & ???        & 16                               & 14                & 4                       & 0                      \\
 \bottomrule
 \end{tabular}
 \caption{Fuzzing campaign results for real world bugs.
 Table shows all reported bugs to project's upstream issue
 tracker and status.  \cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed but unfixed bugs}. 
 \acirc~is \textbf{duplicate bug reports} (either reported
-duplicatively by us or another contributor).  \xmark~is \textbf{invalid} bug
-reports (deemed not a real bug, i.e., WONTFIX). \textbf{Total bugs} is the
-number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fixed + \clock~Unfixed bugs).
+duplicatively by us or another contributor).
+% \xmark~is \textbf{invalid} bug reports (deemed not a real bug, i.e., WONTFIX). 
+\textbf{Total} is the number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fixed + \clock~Unfixed bugs).
 {\color{red} Table to include Alex's bugs still.} 
 {\color{red} Alex to answer: what do want to put for "campaign length" here? Fuzz time, or time span of bug reports? Or both (and we add a column)?}
 }
