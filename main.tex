@@ -56,6 +56,22 @@
 \newcommand{\solUniqueConfirmed}{2} % \solACurrentConfirmedUnfixed (2). Still waiting on \solACurrentReportedNoVerdict (1) (or does this mean it's confirmed?)
 \newcommand{\solUniqueFixedOrConfirmed}{70} % \solUniqueFixed (68) + \solUniqueConfirmed (2)
 
+%% MOVE %%
+\newcommand{\movUniqueFixed}{12}
+\newcommand{\movUniqueConfirmed}{2}
+\newcommand{\movUniqueFixedOrConfirmed}{14}
+
+%% FE %%
+
+%% Zig %%
+\newcommand{\zigUniqueConfirmed}{2}
+\newcommand{\zigUniqueFixedOrConfirmed}{2}
+
+%% ALL %%
+\newcommand{\allUniqueFixed}{80} % \solUniqueFixed (68) + \movUniqueFixed (12) + \zigUniqueFixed (0) + \feUniqueFixed (???)
+\newcommand{\allUniqueConfirmed}{6} % \solUniqueConfirmed (2) + \movUniqueConfirmed (2) + \zigConfirmed (2) + \feUniqueFixedOrConfirmed (???)
+\newcommand{\allUniqueFixedOrConfirmed}{86} % \solUniqueFixedOrConfirmed (70) + \movUniqueFixedOrConfirmed (14) + \zigUniqueFixedOrConfirmed (2) + \feUniqueFixedOrConfirmed (???)
+
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 \newcommand{\acirc}{\textbf{--}}

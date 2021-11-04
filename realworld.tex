@@ -10,11 +10,13 @@
                     \bf Project       & \bf Length & \bf Total                        & \cmark            & \clock                  & \acirc                 \\
 \midrule
                     Solidity          &            & \solUniqueFixedOrConfirmed      & \solUniqueFixed   & \solUniqueConfirmed     & \solAValidDuplicates   \\
-                    Move              & ???        & 14                               & 12                & 2                       & 0                      \\
+                                      % Fuzz: about a week Reports: Jan 27 to Feb 9 2021.
+                    Move              & 20d        & \movUniqueFixedOrConfirmed       & \movUniqueFixed   & \movUniqueConfirmed     & 0                      \\
                     Fe                &            &                                  &                   &                         &                        \\
-                    Zig               & ???        & 2                                & 0                 & 2                       & 0                      \\
+                                      % Fuzz: about a week. Reports: 1 day
+                    Zig               & 7d         & \zigUniqueFixedOrConfirmed       & 0                 & \zigUniqueConfirmed     & 0                      \\
 \midrule
-                    All               & ???        & 16                               & 14                & 4                       & 0                      \\
+                    All               & ???        & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \solAValidDuplicates    \\
 \bottomrule
 \end{tabular}
 \caption{Fuzzing campaign results for real world bugs.
