@@ -1,20 +1,17 @@
 \section{Non-Experimental Fuzzing Campaigns:  Bugs Reported}
 \label{real-world}
 
-{\bf WE NEED A NICE TABLE OF BUG CATEGORIES FOR ALL THE CAMPAIGNS WE RAN, INCLUDING CAMPAIGN LENGTH}
-
-
 \begin{table}
 \centering
 \begin{tabular}{lrr|rrr}
 \toprule
                     \bf Project       & \bf Length & \bf Total                        & \cmark            & \clock                  & \acirc                 \\
 \midrule
-                    Solidity          & ????       & \solUniqueFixedOrConfirmed      & \solUniqueFixed   & \solUniqueConfirmed     & \solAValidDuplicates   \\
+                    Solidity          & 20mo 30d      & \solUniqueFixedOrConfirmed      & \solUniqueFixed   & \solUniqueConfirmed     & \solAValidDuplicates   \\
                                       % Fuzz: about a week Reports: Jan 27 to Feb 9 2021.
                     Move              & 20d        & \movUniqueFixedOrConfirmed       & \movUniqueFixed   & \movUniqueConfirmed     & 0                      \\
                                                                                                                                     % 63 submittd, 49 are fixed or confirmed, are the other 14 wrong or dups?
-                    Fe                & ????       & \feUniqueFixedOrConfirmed        & \feUniqueFixed    & \feUniqueConfirmed      & {\color{red}(14?)}      \\
+                    Fe                & 9mo 6d      & \feUniqueFixedOrConfirmed        & \feUniqueFixed    & \feUniqueConfirmed      & 6      \\
                                       % Fuzz: about a week. Reports: 1 day
                     Zig               & 7d         & \zigUniqueFixedOrConfirmed       & 0                 & \zigUniqueConfirmed     & 0                      \\
 \midrule
@@ -28,8 +25,6 @@ tracker and status.  \cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed 
 duplicatively by us or another contributor).
 % \xmark~is \textbf{invalid} bug reports (deemed not a real bug, i.e., WONTFIX). 
 \textbf{Total} is the number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fixed + \clock~Unfixed bugs).
-{\color{red} Table to include Alex's bugs still.} 
-{\color{red} Alex to answer: what do want to put for "campaign length" here? Fuzz time, or time span of bug reports? Or both (and we add a column)?}
 }
 \label{tab:campaign-fixes}
 \end{table}
@@ -55,18 +50,19 @@ duplicatively by us or another contributor).
 \label{tab:bug-breakdown}
 \end{table*}
 
+In addition to our controlled experiments fuzzing a version of each compiler before we reported any bugs, we ran real fuzzing campaigns, updating the compiler versions as new commits were made, and adjusting our corpus to include new tests, of various durations, on each compiler.  Two of these campaigns are ongoing (for Solidity and Fe) and have been well-supported and well-received by the compiler teams.
 
+\begin{sloppypar}
+  Perhaps the most important evidence of the effectiveness of this approach is that we applied it to fuzzing the Solidity compiler for over a year, and in that time reported a large number of otherwise unreported bugs that have been fixed; we submitted our most recent bug (as of this writing) on 11/2/21.  Prior to and during our campaign, Solidity had been fuzzed heavily using AFL, using a dictionary, by the developers and by external contributors, and has been on oss-fuzz since the first quarter of 2019 (\url{https://blog.soliditylang.org/2021/02/10/an-introduction-to-soliditys-fuzz-testing-approach/}).  While no grammar-based approach has been applied to Solidity as a whole, the Yul IL has been fuzzed using Google's libprotobug-mutator library (\url{https://github.com/google/libprotobuf-mutator}).  Despite competing with these efforts, and never devoting more resources to the fuzzing than 3-4 docker container hosted instances of our fuzzing tool, running on a high-end laptop, we believe that our campaign was the largest single source of fuzzing-discovered bugs in the compiler during our campaign.  The campaign was awarded a security bounty of \$1,000 USD in Ethereum for discovery of a bug with potential security implications (and, it was noted, for the general effectiveness of the fuzzing), and the Solidity team encouraged and aided our efforts, once it was clear that the approach was very useful in exposing subtle bugs not otherwise discovered.  Note that a small number of the bugs for Solidity reported above are for a much more brief (about 14 day) campaign directed at the Yul IL layer.  This produced some confirmed and fixed bugs, but most of our unconfirmed or ambigious bugs for Solidity, and so was abandoned.
+\end{sloppypar}
 
+A second long-term fuzzing effort was directed at the Fe language, a Rust/Python-like alternative to Solidity for writing Ethereum contracts.  Fe is an experimental language, and the project has far fewer resources than Solidity to devote to testing.  Fe developers received this effort warmly, and quickly made some changes to the Fe compiler to make AFL fuzzing more effective (by crashing when Fe caused the Yul backend to fail).  Using our approach, we were able to provide the project with high-quality fuzzing very early in the lifetime of an experimental compiler project.  We speculate that better ``no-fuss'' fuzzing could expose language corner cases early in the implementation of a compiler, avoiding having to make costly changes later, when more code depends on erroneous implementation assumptions or (even more disastrously) poor language design choices.  Due to the small size of the Fe team, 8 of our reported bugs have not been analyzed yet and confirmed as valid.  The most recent of these was submitted (as of this writing) on 9/25/21.  The Fe effort was sufficiently influential that it was heavily invoked (and our advice solicited) in discussions of the long-term strategies for building language-customized fuzzing for Fe.
 
-Perhaps the most important evidence of the effectiveness of this approach is that we applied it to fuzzing the Solidity compiler for over a year, and in that time reported XX bugs that have been fixed.  Prior to and during our campaign, Solidity had been fuzzed heavily using AFL, by the developers and by external contributors.  Despite competing with the internal fuzzing team of the project and other developers, and never devoting more resources to the fuzzing than 3-4 docker container hosted instances of our fuzzing tool, running on a high-end laptop, we believe that our campaign was the largest single source of fuzzing-discovered bugs in the compiler during our campaign.  The campaign was awarded a security bounty of \$1,000 USD in Ethereum for discovery of a bug with potential security implications (and, it was noted, for the general effectiveness of the fuzzing), and the Solidity team encouraged and aided our efforts, once it was clear that the approach was very useful in exposing subtle bugs.
-
-A second long-term fuzzing effort was directed at the Fe language, a Rust/Python-like alternative to Solidity for writing Ethereum contracts.  Fe is an experimental language, and the project has far fewer resources than Solidity to devote to testing.  We worked with the Fe developers to make Fe crash in additional cases, and were able to provide them with high-quality fuzzing very early in the lifetime of an experimental compiler project.  We believe this effort was very useful to the Fe team, based on their comments, and speculate that better ``no-fuss'' fuzzing could expose language corner cases early in the implementation of a compiler, avoiding costly changes when more code depends on erroneous assumptions, or poor language design choices.
-
-At the time we fuzzed Facebook's \texttt{Move} compiler, the project had been fuzzing various components, but less so the smart language compiler itself.
-The majority of bugs reported in \texttt{Move} compiler were quickly confirmed and fixed, and developers expressed interest in incorporating our approach into their fuzzing CI.\footnote{Link to public dialog omitted for anonymity.}  % link: https://github.com/diem/diem/issues/7384#issuecomment-769443728
+At the time we fuzzed Facebook's \texttt{Move} compiler, the project had been fuzzing various components, but less so the compiler itself.
+The majority of bugs reported in the \texttt{Move} compiler were quickly confirmed and fixed, and developers expressed interest in incorporating our approach into their fuzzing CI.\footnote{Link to public dialog omitted for anonymity.}  % link: https://github.com/diem/diem/issues/7384#issuecomment-769443728
 
 
 We ran a shorter, less-intensive campaign on the \texttt{Zig} compiler.  The
 \texttt{Zig} compiler continues to be under heavy development, and a small team
-of maintainers are prioritizing effort to rewrite the components where we found
+of maintainers are prioritizing efforts to rewrite the components where we found
 bugs.

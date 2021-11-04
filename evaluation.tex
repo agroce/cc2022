@@ -15,9 +15,17 @@ against stock AFL and AFL++ fuzzers on four actively-developed compilers.
 \subsection{Experimental Setup}
 \label{exp-setup}
 
-We evaluate on four compilers for languages Solidity,\footnote{https://docs.soliditylang.org/}
+We evaluated our approach using four compilers,  for the languages Solidity,\footnote{https://docs.soliditylang.org/}
 Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/} (smart contract languages)
-and the trending general-purpose language Zig.\footnote{https://ziglang.org}
+and the trending general-purpose language
+Zig.\footnote{https://ziglang.org}.  Move and Fe are implemented in
+Rust, Solidity is implemented in C++, and Zig is implemented in a mix
+of C++ and Zig itself.  Solidity is a very widely used language, since
+it is the primary language used for smart contracts on the Ethereum
+blockchain.  Move and Fe are experimental smart contract languages,
+and Zig is an up-and-coming systems language operating in
+the same space as C, Rust, Nim, and other statically-typed languges
+with manual memory management.
 
 \noindent \textbf{Fuzzer configurations.} We perform a comparative evaluation
 of four fuzzing configurations.  The first configuration is stock \texttt{AFL},
@@ -33,8 +41,8 @@ the \texttt{AFL++} project, which can often outperform stock \texttt{AFL}.
 Therefore, for extra measure, we sought to compare our results to a second
 fuzzing configuration using the existing \texttt{AFL++} tool. We were
 successful at configuring \texttt{AFL++} for three of our four compilers
-(excluding Zig), and report our results in Section~\ref{exp-results}.  Note
-however, that since our technique is not implemented in \texttt{AFL++}, the
+(excluding Zig), and report our results in Section~\ref{exp-results}.
+Note, however, that since our technique is not implemented in \texttt{AFL++}, the
 comparison is incongruent, and potentially handicapped by orthogonal
 \texttt{AFL++} improvements that may stand to boost our
 approach.\footnote{Indeed, recent improvements in \texttt{AFL++}, not available
@@ -50,7 +58,7 @@ string-level mutation strategy with syntax-aware mutation
 (Section~\ref{strat-syntax-aware}), where our \texttt{AFL} has \textbf{33\%}
 probability to request that the server generate a new input (using template
 splicing), \textbf{33\%} probability to perform string-level mutation on the
-input, and a remaining \textbf{34\%} probability to run \texttt{AFL} as usual.
+input, and \textbf{34\%} probability to run \texttt{AFL} as usual.
 
 We chose the ratios in our strategies with a best-effort method by running just
 a single 24 hour trial on a single project (Solidity) for various
@@ -58,13 +66,13 @@ configurations (e.g., 90\% string-level mutation, 75\% pure syntax-aware
 mutation, and 25\%-50\% ratio). We found the 75\% and 33\%-33\% strategies
 to be the best candidates to evaluate deeply over many hours of fuzzing. We
 note the especially appealing avenue of future work for devising optimal
-seletions of these parameters (perhaps based on language attributes, or input
+selections of these parameters (perhaps based on language attributes, or input
 corpora).
 
 \noindent \textbf{Fuzzing trials and duration.} We ran 16 trials per fuzzing
 configuration for each compiler to control for variability and randomness.  We
 ran four configurations for the Solidity, Move, and Fe compilers (where
-\texttt{AFL++}) is included, and three configurations for Zig (\texttt{AFL++})
+\texttt{AFL++} is included), and three configurations for Zig (\texttt{AFL++})
 excluded) for a total of 112 trials.  A single trial comprises 24 hours of
 fuzzing on a single core, starting from the initial input corpus.  %
 16*3*24+16*4*24 = 2,688 hours We chose 24 hour trials because our intent is to
@@ -72,7 +80,8 @@ answer whether we can observe (relatively immediate) effects of strategies that
 aim to surface deeper bugs.  Our choice aligns with existing work that shows
 finding new vulnerabilities earlier during a fuzzing campaign is proportionally
 cheaper (more likely) than long-running campaigns~\cite{fuzzexp}. I.e., if our
-strategies exhibit any significant competitive advantage, we expect it manifest
+strategies exhibit any significant competitive advantage, we expect it
+to manifest
 early for a controlled setting (within 24 hours).  In aggregate, our
 experiments represent 112 days of fuzzing to demonstrate fuzzer performance for
 quickly surfacing bugs with our ``no-fuss'' enhancements on these compilers.
@@ -111,7 +120,7 @@ program fragments.  The remaining project corpora are as follows:
 time to generate templates/fragments. It's somewhere in the range of 15 mins to
 an hour per project}. 
 
-For fuzzer trials using 33\% syntax-aware mutation strategy, we start fuzzing
+For fuzzer trials using the 33\% syntax-aware mutation strategy, we start fuzzing
 with an empty, ``zero'' program and rely entirely on the probbility to
 introduce newly generated inputs from the \textbf{Templ.} and \textbf{Frag.}
 over time. This gives ample opportunity to potentially generate new
@@ -163,7 +172,15 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
 \bottomrule
 \end{tabular} 
         \caption{Main results of controlled experiment. We fuzzed each project for 16 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AF++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
-\texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a community-driven effort that enhances stock AFL. \texttt{text-mutation} applies mutation operators (textual find-replace patterns) with a probability of 75\% on every fuzzed input. Stock AFL manipulates the input witht the remainder, 25\% of the time. \texttt{splice-mutation} is a hybrid approach that (1) applies mutation operators as in \texttt{text-mutation} with probability 33\%; (2) synthesizes a syntax-aware input with template (splice) 33\% of the time, and (3) uses stock AFL for the remainding 34\%. {\color{red} TODO: summarize results once flush.}}
+\texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a
+community-driven effort that enhances stock
+AFL. \texttt{text-mutation} applies fast string-based mutation operators (textual
+find-replace patterns) with a probability of 75\% on every fuzzed
+input. Stock AFL manipulates the input the remaining 25\% of the
+time. \texttt{splice-mutation} is a hybrid approach that (1) applies
+mutation operators as in \texttt{text-mutation} with probability 33\%;
+(2) synthesizes a syntax-aware input with template (splice) with
+probability 33\%; and (3) uses stock AFL the remaining 34\% of the time.}
 \label{tab:results}
 \end{table*}
 
@@ -171,7 +188,7 @@ Our main result is that our enhancements with string-level and syntax-aware
 mutation consistently uncover unique bugs missed by \texttt{AFL} and
 \texttt{AFL++}, often performing better and yielding a higher overall discovery
 of unique bugs. Which strategy is favorable varies per project, and in some
-cases, one of our strategies underperform due to the ``fast or smart?''
+cases, one of our strategies underperforms due to the ``fast or smart?''
 tradeoff. We first give an overview of results followed by notable
 thematic observations.
 
@@ -180,11 +197,11 @@ runs for each project and configuration pair. A row in the table represents the
 average number over 16 trials for a project in that configuration.
 \texttt{AFL-baseline} is stock \texttt{AFL}'s results. For projects Solidity,
 Move, and Fe, we include \texttt{AFL++}'s results. The \texttt{AFL++} version
-varies based on the version compatible with a a project's past commit when we
-started fuzzing. All \textbf{Unique Bugs} are determined classifying crashing
+varies based on the version compatible with a project's commit at which we
+started fuzzing. All \textbf{Unique Bugs} are determined by classifying crashing
 inputs by bug-fixing commits (we assume a single commit fixes a single bug, an
 assumption that is consistent with prior
-work\cite{semantic-crash-bucketing,swarm-paper}, general software development
+work~\cite{semantic-crash-bucketing,Taming}, general software development
 practice, and our manual inspection). I.e., \textbf{Unique bugs} is a precise
 ground truth of truly unique bugs.
 
@@ -209,6 +226,7 @@ variability in input mutation. Our weakest result reveals two related insights:
 \item One of our strategies may underperform compared to stock approaches. This is the case for Move, where \texttt{splice-mutation} performs worse than the baseline, \\ whereas \texttt{text-mutation} performs best.
 \end{itemize}
 
+\begin{sloppypar}
 These observations highlight the potential \emph{tradeoffs} of ``fast or
 smart?'' mutation. In the former case, simple mutations are not enough to
 enrich the search space and discover more bugs, but the smarter hybrid variety
@@ -216,7 +234,9 @@ does perform marginally better, despite being more than 3 times \emph{slower}
 than all other approaches by average number of executions (\textbf{Avg.
 Execs}). Conversely, the quick \texttt{text-mutation} approach does best in the
 Move project, where the \texttt{splice-mutation} hybrid variety is just too
-slow ($\approx8\times$ slower) to compensate for its ``smart'' benefit.
+slow ($\approx8\times$ slower) to compensate for its ``smart''
+benefit.
+\end{sloppypar}
 
 \textbf{A look at quick and exclusive findings.} Perhaps the most compelling
 case for choosing ``fast or smart'' mutation enhancements is the ability to
@@ -238,7 +258,17 @@ these cases, evidence points to hybrid approaches leading to rapid and
 exclusive discoveries of certain bugs arising from 
 the combination of simple and complex mutations on the input space.
 
-{\color{red} rijnard asks: general question in this section: how can we emphasize harder that even a +1 or +1.5 bug on average is actually really significant? it feels like it should be (we ran for a shorter amount of time). maybe calling out more to the "expontential fuzzing cost" paper?}
+While finding only 1 additional bug or 1.5 additional bugs may, at
+first, seem like a modest gain, it is important to recall that in
+fuzzing, finding additional bugs is \emph{extremely hard}.  B\"{o}hme
+and Falk~\cite{fuzzexp} show that ``[W]ith twice the machines, we can
+find \emph{all known} bugs in half the time. Yet, finding linearly
+\emph{more} bugs in the same time requires exponentially more
+machines'' \cite{fuzzexp}.  That is, finding even one more bug may be
+very costly.  Moreover, as our real-world results below show, over
+time the ability to detect additional bugs adds up to a substantial
+number of new bugs detected, even for a compiler being aggressively
+fuzzed by numerous other techniques, using more computing power.
 
 \textbf{Properties of mutated inputs}
 {\color{red} TODO: text here that talk about the Queue and compiles/errors stuff}

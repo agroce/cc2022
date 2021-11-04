@@ -1,13 +1,14 @@
 \section{Implementation and Example Operations}
 \label{implementation}
 
-The heart of the implementation is to add a set of mutation operators
-to the repertoire of changes that a mutation-based fuzzer can apply to
-an input.  There is a large literature on the selection of mutation
-operators to apply, but this literature focuses on identifying
+The heart of the implementation is to implement a set of mutation-testing operators
+so that a mutation-based fuzzer can apply them to
+inputs.  There is a large literature on the selection of mutation
+operators for mutation testing, but this literature focuses on identifying
 operators that help find holes in a testing effort.  There is no
 reason to believe that this is particularly indicative of the
-operators that will be most useful in fuzzing.  We therefore simply
+operators that will be most useful in fuzzing, and there is some
+suggestion that such approaches do not outperform random selection in any case~\cite{MutReduct}.  We therefore 
 used a large number of operators that apply to a wide variety of
 programming languages, based on the set of operators provided by the
 Universal Mutator tool, ignoring any highly-language-specific operators.
@@ -18,9 +19,9 @@ More important than the selection of the best mutation operators
 (which will likely vary considerably by target compiler) is a
 fundamental decision.  A mutation testing tool can be highly intelligent, only
 applying operators in ways that should produce compiling code, based
-on a parse of the program to be mutated.  Or, like the universal
-mutator, it can be ``dumb'' and apply rules without expensive analysis
-of the code, trusting the compiler to prune the resulting invalid
+on a parse of the program to be mutated.  Or, like the Universal
+Mutator, it can be ``dumb'' and apply rules without expensive analysis
+of the code, trusting a compiler to prune resulting invalid
 mutants.  Which approach is best for fuzzing is not obvious: on the
 one hand, all fuzzing (including generative) relies on executing very
 large numbers of inputs; most ``random'' inputs will be uninteresting,
@@ -84,32 +85,36 @@ case 55: /* Delete something like "const" case 1 */
 \end{figure}
 
 The core implementation of our technique is a text-based approximation
-of the regular expression based approach taken by the universal
-mutator.  Rather than call the mutation tool, which is written in
+of the regular expression based approach taken by the Universal
+Mutator.  Rather than call the mutation tool, which is written in
 Python and relatively slow, we hand-crafted, using low-level C string
 libraries, approximations of the mutation operators for all languages
 (the ``universal'' rules from the universal mutator) and those for
 ``C-like'' languages.  Figure \ref{fig:foperators} shows part of the
 implementation.  Most operators are implemented by choosing a string
-to find and a string to repalce it with; the mutator finds a random
+to find and a string to replace it with; the mutator finds a random
 occurrence of the {\tt original} string and replaces it with the {\tt
   replacement} string.  Other operators require more involved string
 manipulation, e.g., removing a semicolon-delimited statement, or
 swapping function arguments.  Critically, however, all operations
 involve only basic C string operations, and no more than 4 linear
 scans of the entire text to be mutated.  The vast majority of operations require no
-more than one linear scan in the worst case.  When an operation that
+more than one linear scan in the worst case, and most scans terminate
+before scanning a large fragment of the input.  When an operation that
 is chosen cannot be applied (e.g., the string to be replaced is not
 present), another operation is attempted, up to a maximum number of
 tries.
 
-This approach is, as stated, is fast.  While slower than many built-in
+This approach is, as stated, fast.  While slower than many built-in
 AFL mutations (obviously searching for strings is slower than flipping
 a randomly chosen bit, or incrementing a byte value), it has a fairly
-low upper bound on worst-case runtime.  The time required is much
+low upper bound on worst-case runtime, and very good average runtime.  The time required is much
 closer to AFL's built in mutations than to techniques such as
 solving constraints, even a linear
-approximation~\cite{Eclipser}.  Figure \ref{fig:fopexample} shows some
+approximation~\cite{Eclipser}, and is successful much, much, more
+often than solving constraints over compiler inputs, which are among
+the hardest conceivable for modern SMT solvers or linear
+approximations to handle.  Figure \ref{fig:fopexample} shows some
 sample transformations of inputs using this approach.  Notice that
 some of the mutations tend to delete code, potentially large amounts
 of code.  This is critical for enabling the fuzzer engine to compose
@@ -119,7 +124,7 @@ merging them.
 
 \begin{figure}
   \raggedright
-  {\scriptsize
+  {
     {\bf Original code:}
 \begin{code}
 $\ldots$      
@@ -173,7 +178,8 @@ $\ldots$
 \subsubsection{Smart Syntax-Aware Mutation}
 \label{strat-syntax-aware}
 
-Our core approach enables fast mutation written in C that we added directly in
+\begin{sloppypar}
+Our core approach uses fast mutation written in C that we added directly to
 AFL's fuzzing hot loop. Our early success with this method prompted us to
 augment AFL further with even smarter mutations to find more bugs more quickly.
 The intuition behind these smarter mutations is to manipulate (typically
@@ -185,22 +191,24 @@ in well-parenthesized expressions or entire multiline code blocks (e.g.,
 function or \texttt{for}-loop bodies). In general, manipulating a program's
 parse tree like this imposes exactly the kind of burden and complexity that
 small compiler projects can't support (defining a precise grammar, keeping
-tooling up to date as the grammar evolves). Even with multiyear investment in
+tooling up to date as the grammar evolves). Even with multi-year investment in
 tools (like Csmith), effort necessarily goes into deeper focus on
 language-specific properties and semantics %, rather than broad, language-general approaches.
 that may not generalize to other compilers.
+\end{sloppypar}
 
 Our approach combats this cost by using the
 \texttt{Comby}\footnote{\href{https://comby.dev}{https://comby.dev}} tool to do
 syntax-aware code matching and transformation. \texttt{Comby} works by coarsely
 parsing a program, taking care to correctly interpret nested syntax of code
 (parentheses and braces), and avoids conflating this syntax with strings and
-comments like regular expressions would.  \texttt{Comby} is not a fully-fledged
+comments, as regular expressions (and our string approach) tends to do.  \texttt{Comby} is not a fully-fledged
 parser for any language, but it \emph{is} language-aware, in that it recognizes
 a small set of language-specific constructs (e.g., syntax to identify quoted
 strings or comments) to accurately parse code blocks. \texttt{Comby} supports
-over 50 languages and uses a generic parser yet-unsupported ones like custom
-DSLs.
+over 50 languages, and uses a generic parser for unsupported languages like custom
+DSLs.  Comby is likely to perform ``well-enough'' for any language
+anyone is likely to want to input to a compiler.
 
 \texttt{Comby} does not have C bindings, so we expose its transformation
 abilities as a server to our AFL fuzzer. We implemented a minimal HTTP client
@@ -258,12 +266,11 @@ The decomposition is itself done by \texttt{Comby}, which extracts concrete
 values inside parentheses, braces, and square brackets (patterns
 \texttt{(\$expr)}, \texttt{\{\$expr\}}, \texttt{[\$expr]} respectively). Note
 that our approach can be customized to extract \emph{any} kind of syntactically
-significant pattern correspondingly decompose the input program; we simply
+significant pattern and correspondingly decompose the input program; we simply
 chose syntax that commonly delineates code blocks and expressions (i.e.,
 parentheses and braces) since these exhibit interesting properties that
 preserve structure (multiline statements, well-formed expressions) that go
 beyond what string-level mutations identify.
-
 
 We perform this decomposition for all programs in the corpus to obtain
 templates and concrete fragments, which we then deduplicate. Once fuzzing, the
@@ -275,19 +282,21 @@ are likely to compose syntactically well-formed programs.
 In addition to generating inputs, the server can also apply syntax-aware
 \texttt{Comby} transformation rules, analogous to string-level mutation
 operators. In practice, our server architecture adds considerable overhead (we
-discuss in Evaluation) that is slow in applying on-the-fly mutations, and less
-appealing than string-level mutation in Section~\ref{strat-fast-string-level}. Our
+discuss this in Section~\ref{eval}) and is thus slow in applying
+on-the-fly mutations, and in that sense less
+appealing than the string-level mutation described in Section~\ref{strat-fast-string-level}. Our
 results in Section~\ref{eval} \emph{do} show, however, that generative
 syntax-aware input manipulation demonstrates compelling utility despite
 incurring significant slowdown.\footnote{We are actively improving the tooling
 architecture, which is generally a matter of engineering rather than
-limitations on the inherent merits of our approach.}
+limitations on the inherent merits of the approach.}
 
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}
 
 Our full implementation is based on Google's released code for the AFL
 fuzzer, and available as an open source tool (that, to date, has 68
-stars on GitHub and has been forked 7 times).\footnote{Link omitted for
+stars on GitHub, has been forked 7 times, and has external users who
+make bug reports and queries to us).\footnote{Link omitted for
   blinding.}  The main change to AFL is the addition of code such as that shown in
 Figure~\ref{fig:foperators}.  The new version (the ``AFL compiler
 fuzzer'') can also call out to {\tt comby} to generate mutants.  Two
@@ -296,4 +305,5 @@ new command line parameters to AFL control the use of these features:
 fast C string implementation (with a default value of 75\%), and {\tt -2} determines the probability
 to call {\tt comby} to generate a mutant (with a default value of
 0\%).  If these two parameters add up to less than 100\%, the
-remainder of the time the usual AFL havoc mutation operators are applied.
+remainder of the time the usual stock AFL havoc mutation operators are
+applied; by default, this happens 25\% of the time.
