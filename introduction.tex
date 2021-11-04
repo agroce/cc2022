@@ -12,33 +12,31 @@ compilers~\cite{Differential}.
 
 \begin{table*}
 \centering
-\begin{tabular}{l|l|l|l}
-  \toprule
-  Technique &  Tool & Requirements & Weaknesses \\
-  & & from Developers & \\
-  \midrule
-  Custom tool (e.g. Csmith) & Custom tool & None & Extremely
-                                                   labor-intensive,
-                                                   potentially\\
-  & & & years
-        of work \\
-  \hline
-  Grammar-based & Grammar-based fuzzer & Usable grammar & Needs tuning, many
-                                                          bugs not in
-                                                          scope\\
-\hline                                                          
-  ``No-fuss'' mutation-based & Off-the-shelf fuzzer (e.g., AFL) & Corpus of
-                                                           examples &
-                                                                      Inefficient,
-                                                                      has
-                                                                      trouble
-                                                                      hitting
-                                                                      ``deep''\\
-          & & & bugs; may focus on ``bad'' code that\\
-   & & &should not
-                  compile but causes crashes \\
-  \hline
-  \bottomrule
+\begin{tabular}{p{45mm}p{30mm}p{30mm}p{45mm}}
+\toprule
+\bf Technique & \bf Tool & \bf Requirements    & \bf Weaknesses \\
+              &          & \bf from Developers &                \\
+% \midrule
+\rowcolor{lightgray}
+Custom tool (e.g. Csmith)  
+& Custom tool 
+& None 
+& Extremely labor-intensive, potentially years of work
+\\
+%\hline
+Grammar-based              
+& Grammar-based fuzzer             
+& Usable grammar 
+& Needs tuning, many bugs not in scope 
+\\
+% \hline
+\rowcolor{lightgray}
+``No-fuss'' mutation-based 
+& Off-the-shelf fuzzer (e.g., AFL) 
+& Corpus of examples 
+& Inefficient, has trouble hitting ``deep'' bugs; may focus on ``bad'' code that should not compile but causes crashes 
+\\
+\bottomrule
 \end{tabular}
 \caption{Compiler Fuzzing Techniques}
 \label{tab:techniques}
