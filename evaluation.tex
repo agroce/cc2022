@@ -1,11 +1,30 @@
 \section{Evaluation}
 \label{eval}
 
+We ran a series of controlled experiments to evaluate the effectiveness of two
+strategies based on our approaches in Sections~\ref{strat-fast-string-level}
+and~\ref{strat-syntax-aware} for improving on ``no-fuss'' compiler fuzzing. Our
+main goal is to answer to what extent these low-effort strategies demonstrate
+significant benefit in the domain of compiler fuzzing, and how they influence
+fuzzer behavior and performance.
 
-\subsection{Setup}
+Section~\ref{exp-setup} describes our experimental setup.
+Section~\ref{exp-results} summarizes our results, which compares our strategies
+against stock AFL and AFL++ fuzzers on four actively-developed compilers. The
+compiler languages we cover include
+smart contract languages
+Solidity,\footnote{https://docs.soliditylang.org/}
+Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/},
+and the trending Zig
+language.\footnote{https://ziglang.org/}
+
+\subsection{Experimental Setup}
+\label{exp-setup}
+
+
 
 \noindent 
-\textbf{Corpus.} For solidity, all \texttt{.sol} files in
+\textbf{Input corpora.} For solidity, all \texttt{.sol} files in
 \texttt{test/libsolidity}. For Move, all \texttt{.diem} files in the
 repository. For \texttt{Fe}, {\color{red} all \texttt{.fe} files in
 repository}. AFL starts of preprocessing inputs based on coverage and ignores uninteresting ones. {\color{red} say how many for each proj}
@@ -22,6 +41,9 @@ After generating pairs,wWe removed all large inputs in the \texttt{(template, fr
 % FE        /home/rijnard/0-experiments-feb/fe-programs                          @ 1ea2206e3d10e77163f1a01bee05088358d8ef23
 %           /home/rijnard/0-experiments-feb/comby-mutation-server-fe/fragments
 
+
+\subsection{Results}
+\label{exp-results}
 
 \begin{table*}
 \centering
@@ -54,3 +76,6 @@ After generating pairs,wWe removed all large inputs in the \texttt{(template, fr
 \texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a community-driven effort that enhances stock AFL. \texttt{text-mutation} applies mutation operators (textual find-replace patterns) with a probability of 75\% on every fuzzed input. Sock AFL manipulates the input witht the remainder, 25\% of the time. \texttt{splice-mutation} is a hybrid approach that (1) applies mutation operators as in \texttt{text-mutation} with probability 33\%; (2) synthesizes a syntax-aware input with template (splice) 33\% of the time, and (3) uses stock AFL for the remainding 34\%. {\color{red} TODO: summarize results once flush.}}
 \label{tab:results}
 \end{table*}
+
+
+

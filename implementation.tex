@@ -44,7 +44,7 @@ mutation without specialized parsers for a compiler's input language,
 at the cost of additonal time required to synthesize inputs.
 
 \subsubsection{Fast String-level Approximation of Mutation Operators}
-\label{fast-string-level}
+\label{strat-fast-string-level}
 
 \begin{figure}
 {\scriptsize
@@ -170,6 +170,7 @@ $\ldots$
 \end{figure}
 
 \subsubsection{Smart Syntax-Aware Mutation}
+\label{strat-syntax-aware}
 
 Our core approach enables fast mutation written in C that we added directly in
 AFL's fuzzing hot loop. Our early success with this method prompted us to
@@ -274,7 +275,7 @@ In addition to generating inputs, the server can also apply syntax-aware
 \texttt{Comby} transformation rules, analogous to string-level mutation
 operators. In practice, our server architecture adds considerable overhead (we
 discuss in Evaluation) that is slow in applying on-the-fly mutations, and less
-appealing than string-level mutation in Section~\ref{fast-string-level}. Our
+appealing than string-level mutation in Section~\ref{strat-fast-string-level}. Our
 results in Section~\ref{eval} \emph{do} show, however, that generative
 syntax-aware input manipulation demonstrates compelling utility despite
 incurring significant slowdown.\footnote{We are actively improving the tooling
