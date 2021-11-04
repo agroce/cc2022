@@ -2,7 +2,7 @@
 \label{eval}
 
 We ran a series of controlled experiments to evaluate the effectiveness of two
-strategies based on our approaches in Sections~\ref{strat-fast-string-level}
+new strategies based on our approaches in Sections~\ref{strat-fast-string-level}
 and~\ref{strat-syntax-aware} for improving on ``no-fuss'' compiler fuzzing. Our
 main goal is to answer to what extent these low-effort strategies demonstrate
 significant benefit in the domain of compiler fuzzing, and how they influence
@@ -17,31 +17,110 @@ against stock AFL and AFL++ fuzzers on four actively-developed compilers.
 
 We evaluate on four compilers for languages Solidity,\footnote{https://docs.soliditylang.org/}
 Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/} (smart contract languages)
-and the trending general-purpose language Zig.\footnote{https://ziglang.org}. 
+and the trending general-purpose language Zig.\footnote{https://ziglang.org}
 
+\noindent \textbf{Fuzzer configurations.} We perform a comparative evaluation
+of four fuzzing configurations.  The first configuration is stock \texttt{AFL},
+our baseline of comparison across all projects. Because our approach is
+integrated directly into stock \texttt{AFL}, we're comparing to the baseline
+\emph{implementation} (a desirable practice for sound comparative fuzzer
+evaluations~\cite{BoehmeCR21}).
+%Citation says: > If possible, the proposed technique (e.g., an improvement to
+%gray > box fuzzing) is implemented directly > into the baseline (e.g., AFL).
+Although \texttt{AFL} continues to be a de facto industry standard for
+``no-fuss'' fuzzing, numerous community-driven improvements have been made to
+the \texttt{AFL++} project, which can often outperform stock \texttt{AFL}.
+Therefore, for extra measure, we sought to compare our results to a second
+fuzzing configuration using the existing \texttt{AFL++} tool. We were
+successful at configuring \texttt{AFL++} for three of our four compilers
+(excluding Zig), and report our results in Section~\ref{exp-results}.  Note
+however, that since our technique is not implemented in \texttt{AFL++}, the
+comparison is incongruent, and potentially handicapped by orthogonal
+\texttt{AFL++} improvements that may stand to boost our
+approach.\footnote{Indeed, recent improvements in \texttt{AFL++}, not available
+at the time of our first implementation, compel us to consider the
+reimplemnting our approach in \texttt{AFL++}.}
 
-\noindent
-\textbf{Fuzzing strategies}
+The third and fourth configurations we compare are both strategies based on our
+new approaches in Section~\ref{implementation}. The third configuration applies
+purely string-level mutations as described in
+Section~\ref{strat-fast-string-level} with \textbf{75\%} probability of
+attempting to mutate the input. The fourth configuration augments the pure
+string-level mutation strategy with syntax-aware mutation
+(Section~\ref{strat-syntax-aware}), where our \texttt{AFL} has \textbf{33\%}
+probability to request that the server generate a new input (using template
+splicing), \textbf{33\%} probability to perform string-level mutation on the
+input, and a remaining \textbf{34\%} probability to run \texttt{AFL} as usual.
+
+We chose the ratios in our strategies with a best-effort method by running just
+a single 24 hour trial on a single project (Solidity) for various
+configurations (e.g., 90\% string-level mutation, 75\% pure syntax-aware
+mutation, and 25\%-50\% ratio). We found the 75\% and 33\%-33\% strategies
+to be the best candidates to evaluate deeply over many hours of fuzzing. We
+note the especially appealing avenue of future work for devising optimal
+seletions of these parameters (perhaps based on language attributes, or input
+corpora).
 
 \noindent \textbf{Fuzzing trials and duration.} We ran 16 trials per fuzzing
-strategy for each compiler to control for variability and randomness. A single
-trial comprises 24 hours of fuzzing on a single core, starting from the initial input corpus.
+configuration for each compiler to control for variability and randomness.
+We ran four configurations for the Solidity, Move, and Fe compilers (where \texttt{AFL++}) is included,
+and three configurations for Zig (\texttt{AFL++}) excluded) for a total of 112 trials.
+A single trial comprises 24 hours of fuzzing on a single core, starting from the initial
+input corpus.
 % 16*3*24+16*4*24 = 2,688 hours 
-We chose 24 hour trials because...
-Our experiments represent 112 days of aggregate fuzzing and thus offer
-substantive evidence of fuzzer performance for quickly surfacing bugs under our
-``no-fuss'' strategies on our chosen compilers.
-
+We chose 24 hour trials because our intent is to answer whether we can observe
+(relatively immediate) effects of strategies that aim to surface deeper bugs.
+Our choice aligns with existing work that shows finding new vulnerabilities
+earlier during a fuzzing campaign is proportionally cheaper (more likely) than
+long-running campaigns~\cite{fuzzexp}. I.e., if our strategies exhibit any
+significant competitive advantage, we expect it manifest early for a controlled
+setting (within 24 hours).
+In aggregate, our experiments represent 112 days of
+fuzzing to demonstrate fuzzer performance for quickly surfacing bugs with our
+``no-fuss'' enhancements on these compilers.
 
 \noindent 
-\textbf{Input corpora.} For solidity, all \texttt{.sol} files in
-\texttt{test/libsolidity}. For Move, all \texttt{.diem} files in the
-repository. For \texttt{Fe}, {\color{red} all \texttt{.fe} files in
-repository}. AFL starts of preprocessing inputs based on coverage and ignores uninteresting ones. {\color{red} say how many for each proj}
+\textbf{Input corpora.} All fuzzer trials ran over inputs derived from the
+project's own source tree. A summary is shown in Table~\ref{tab:inputs}. For
+example, the Solidity base corpus is 2,447 \textbf{Files} ending in
+\texttt{.sol} in the \texttt{test/libsolidity} subdirectory.  For fuzzer trials
+using syntax-aware input generation, we decompose the base corpus into unique
+templates (\textbf{Templ.}) and concrete program fragments (\textbf{Frag.}).
+Because this process can yield very large (and therefore slow) inputs during
+generation, we remove all templates and fragments larger than 4KB.  For
+Solidity, the base corpus decomposes into 9,308 templates and 7,651 concrete
+program fragments.  The remaining project corpora are as follows:
 
-For the template splicing technique, we start off with a noop input and
-gradually generate \texttt{(template, fragment)} pairs, synthesized on-demand.
-After generating pairs,wWe removed all large inputs in the \texttt{(template, fragment)} corpus (> 4KB). {\color{red} say how many of these}.
+\begin{table}[h!]
+\centering
+\begin{tabular}{llrrr}
+\toprule
+                    \bf Proj          & \bf Source                    & \bf Files         & \bf Templ.     & \bf Frag. \\
+\midrule
+                    \mr{1}{Solidity}  & \texttt{.sol} test files      & 2,447             & 9,308         & 7,651     \\
+                    \mr{1}{Move}      & all \texttt{.diem}            & 1,103             & 9,650         & 10,916    \\
+                    \mr{1}{Fe}        & all \texttt{.fe}              & 126               & 253           & 153          \\
+                    \mr{1}{Zig}       & compile-error tests           & 586               & 1,762         & 1,562      \\ 
+\bottomrule
+\end{tabular}
+\caption{Summary of input corpora for four compilers.}
+\label{tab:inputs}
+\end{table}
+\vspace{-3em}
+{\color{red} TODO Rijnard: come back and mention average
+time to generate templates/fragments. It's somewhere in the range of 15 mins to
+an hour per project}. 
+
+For fuzzer trials using 33\% syntax-aware mutation strategy, we start fuzzing
+with an empty, ``zero'' program and rely entirely on the probbility to
+introduce newly generated inputs from the \textbf{Templ.} and \textbf{Frag.}
+over time. This gives ample opportunity to potentially generate new
+combinations of inputs at runtime without processing seed inputs. All other
+configurations start with the seed \textbf{Files}, which \texttt{AFL} processes
+to discover ones with ``interesting'' coverage properties.
+
+\noindent \textbf{Hardware.} Each trial ran on Ubuntu 18.04, on a single core
+of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
 
 % Data lives here:
 % Solidity: /home/rijnard/0-experiments-feb/sol-programs                         @ 686b62b585d686f08fe2f8d586b8474c133dce2f + cherry-pick
