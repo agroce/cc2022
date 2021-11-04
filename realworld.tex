@@ -61,4 +61,11 @@ Perhaps the most important evidence of the effectiveness of this approach is tha
 
 A second long-term fuzzing effort was directed at the Fe language, a Rust/Python-like alternative to Solidity for writing Ethereum contracts.  Fe is an experimental language, and the project has far fewer resources than Solidity to devote to testing.  We worked with the Fe developers to make Fe crash in additional cases, and were able to provide them with high-quality fuzzing very early in the lifetime of an experimental compiler project.  We believe this effort was very useful to the Fe team, based on their comments, and speculate that better ``no-fuss'' fuzzing could expose language corner cases early in the implementation of a compiler, avoiding costly changes when more code depends on erroneous assumptions, or poor language design choices.
 
-We also ran shorter, less-intensive campaigns against other compilers.
+At the time we fuzzed Facebook's \texttt{Move} compiler, the project had been fuzzing various components, but less so the smart language compiler itself.
+The majority of bugs reported in \texttt{Move} compiler were quickly confirmed and fixed, and developers expressed interest in incorporating our approach into their fuzzing CI.\footnote{Public dialog omitted for anonymity.}  % link: https://github.com/diem/diem/issues/7384#issuecomment-769443728
+
+
+We ran a shorter, less-intensive campaign on the \texttt{Zig} compiler.  The
+\texttt{Zig} compiler continues to be under heavy development, and a small team
+of maintainers are prioritizing effort to rewrite the components where we found
+bugs.

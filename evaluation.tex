@@ -10,17 +10,27 @@ fuzzer behavior and performance.
 
 Section~\ref{exp-setup} describes our experimental setup.
 Section~\ref{exp-results} summarizes our results, which compares our strategies
-against stock AFL and AFL++ fuzzers on four actively-developed compilers. The
-compiler languages we cover include
-smart contract languages
-Solidity,\footnote{https://docs.soliditylang.org/}
-Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/},
-and the trending Zig
-language.\footnote{https://ziglang.org/}
+against stock AFL and AFL++ fuzzers on four actively-developed compilers. 
 
 \subsection{Experimental Setup}
 \label{exp-setup}
 
+We evaluate on four compilers for languages Solidity,\footnote{https://docs.soliditylang.org/}
+Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/} (smart contract languages)
+and the trending general-purpose language Zig.\footnote{https://ziglang.org}. 
+
+
+\noindent
+\textbf{Fuzzing strategies}
+
+\noindent \textbf{Fuzzing trials and duration.} We ran 16 trials per fuzzing
+strategy for each compiler to control for variability and randomness. A single
+trial comprises 24 hours of fuzzing on a single core, starting from the initial input corpus.
+% 16*3*24+16*4*24 = 2,688 hours 
+We chose 24 hour trials because...
+Our experiments represent 112 days of aggregate fuzzing and thus offer
+substantive evidence of fuzzer performance for quickly surfacing bugs under our
+``no-fuss'' strategies on our chosen compilers.
 
 
 \noindent 
