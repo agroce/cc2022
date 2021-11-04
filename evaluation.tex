@@ -146,29 +146,31 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
 
 \begin{table*}[t!]
 \centering
-\begin{tabular}{llrrrrrrcr}
+\begin{tabular}{llrrrrrrc}
 \toprule
-                    \bf Project      & \bf Configuration                           & \mc{3}{c}{\bf Unique Bugs}        & \bf Avg Execs  & \bf Avg Paths    & \bf Avg Bitmap    & \mc{2}{c}{\bf Queue}            \\
-                                     &                                             & Avg     & Min       & Max         & (Millions)     & (K)              & Cvg (\%)          & Compiles (K)     & Unique Errs \\
+                    \bf Project      & \bf Configuration
+  & \mc{3}{c}{\bf Unique Bugs}        & \bf Avg Execs  & \bf Avg Paths
+  & \bf Avg Bitmap    & Compiles (K)    \\
+                                     &                                             & Avg     & Min       & Max         & (Millions)     & (K)              & Cvg (\%)          &   \\
 \midrule
-                    \mr{4}{Solidity} & \tt \small      AFL-baseline                &  3.69   & 1         &  6          & 35.8           & 12.0             & 54.34\ph{a}       & 2.89             & ????          \\ 
-                                     & \tt \small      AFL++ 3.15a                 &  5.63   & 1         & 10          & 56.9           &  8.8             & 20.58$^\dagger$   & 3.80             & ????          \\ 
-                                     & \tt \small      text-mutation               &  7.81   & 7         & 11          & 30.3           & 14.3             & 55.65\ph{a}       & 5.48             & ????          \\ 
-                                     & \tt \small      splice-mutation             & 11.81   & 7         & 14          & 16.0           & 16.8             & 57.33\ph{a}       & 5.24             & ????          \\ 
+                    \mr{4}{Solidity} & \tt \small      AFL-baseline                &  3.69   & 1         &  6          & 35.8           & 12.0             & 54.34\ph{a}       & 2.89                     \\ 
+                                     & \tt \small      AFL++ 3.15a                 &  5.63   & 1         & 10          & 56.9           &  8.8             & 20.58$^\dagger$   & 3.80                 \\ 
+                                     & \tt \small      text-mutation               &  7.81   & 7         & 11          & 30.3           & 14.3             & 55.65\ph{a}       & 5.48                \\ 
+                                     & \tt \small      splice-mutation             & 11.81   & 7         & 14          & 16.0           & 16.8             & 57.33\ph{a}       & 5.24                 \\ 
 \midrule
-                    \mr{4}{Move}     & \tt \small      AFL-basline                 & 7.19    & 6         & 8           & 56.9           & 4.9              & 63.23\ph{a}       &                  &               \\ 
-                                     & \tt \small      AFL++ 2.54b                 & ????    & ?         & ?           & ????           & ???              & ?????             &                  &               \\ 
-                                     & \tt \small      text-mutation               & 8.31    & 7         & 9           & 61.2           & 6.0              & 62.27\ph{a}       &                  &               \\ 
-                                     & \tt \small      splice-mutation             & 6.06    & 5         & 7           &  7.2           & 5.0              & 63.18\ph{a}       &                  &               \\ 
+                    \mr{4}{Move}     & \tt \small      AFL-basline                 & 7.19    & 6         & 8           & 56.9           & 4.9              & 63.23\ph{a}       &                             \\ 
+                                     & \tt \small      AFL++ 2.54b                 & ????    & ?         & ?           & ????           & ???              & ?????             &                          \\ 
+                                     & \tt \small      text-mutation               & 8.31    & 7         & 9           & 61.2           & 6.0              & 62.27\ph{a}       &                         \\ 
+                                     & \tt \small      splice-mutation             & 6.06    & 5         & 7           &  7.2           & 5.0              & 63.18\ph{a}       &                         \\ 
 \midrule
-                    \mr{4}{Fe}       & \tt \small      AFL-baseline                & 6.56    & 5         & 7           & 24.5           & 3.5              & 27.91\ph{a}       &                  &               \\ 
-                                     & \tt \small      AFL++ 2.64c                 & 6.44    & 5         & 8           & 22.6           & 3.4              & 27.76\ph{a}       &                  &               \\ 
-                                     & \tt \small      text-mutation               & 6.50    & 5         & 7           & 17.9           & 3.3              & 27.84\ph{a}       &                  &               \\ 
-                                     & \tt \small      splice-mutation             & 6.94    & 6         & 9           &  5.0           & 2.6              & 27.83\ph{a}       &                  &               \\ 
+                    \mr{4}{Fe}       & \tt \small      AFL-baseline                & 6.56    & 5         & 7           & 24.5           & 3.5              & 27.91\ph{a}       &                          \\ 
+                                     & \tt \small      AFL++ 2.64c                 & 6.44    & 5         & 8           & 22.6           & 3.4              & 27.76\ph{a}       &                       \\ 
+                                     & \tt \small      text-mutation               & 6.50    & 5         & 7           & 17.9           & 3.3              & 27.84\ph{a}       &                          \\ 
+                                     & \tt \small      splice-mutation             & 6.94    & 6         & 9           &  5.0           & 2.6              & 27.83\ph{a}       &                          \\ 
 \midrule
-                    \mr{3}{Zig}      & \tt \small      AFL-baseline                & ????    & ?         & ??          & 2.2            & 3.3              & 40.99\ph{a}       &                  &               \\ 
-                                     & \tt \small      text-mutation               & ????    & ?         & ??          & 2.1            & 3.3              & 40.95\ph{a}       &                  &               \\ 
-                                     & \tt \small      splice-mutation             & ????    & ?         & ??          & 1.3            & 3.9              & 41.82\ph{a}       &                  &               \\ 
+                    \mr{3}{Zig}      & \tt \small      AFL-baseline                & ????    & ?         & ??          & 2.2            & 3.3              & 40.99\ph{a}       &                         \\ 
+                                     & \tt \small      text-mutation               & ????    & ?         & ??          & 2.1            & 3.3              & 40.95\ph{a}       &                       \\ 
+                                     & \tt \small      splice-mutation             & ????    & ?         & ??          & 1.3            & 3.9              & 41.82\ph{a}       &                        \\ 
 \bottomrule
 \end{tabular} 
         \caption{Main results of controlled experiment. We fuzzed each project for 16 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AF++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
@@ -270,5 +272,20 @@ time the ability to detect additional bugs adds up to a substantial
 number of new bugs detected, even for a compiler being aggressively
 fuzzed by numerous other techniques, using more computing power.
 
-\textbf{Properties of mutated inputs}
-{\color{red} TODO: text here that talk about the Queue and compiles/errors stuff}
+\textbf{Properties of mutated inputs.} For Solidity, we also examined the distinct number of \emph{compiling}
+inputs in the final queue (the set of all interesting, non-crashing,
+inputs AFL produced).  We investigated this because the number of
+paths found is somewhat uninformative for compilers, where in general
+paths that expose peculiar parse errors are less interesting for
+testing the compiler's internals than paths involving different
+behavior in the stages of compilation after parsing.  The most serious
+compiler bugs, with potential to produce \emph{wrong code}, break
+invariants in the later stages of compilation, especially during
+complex optimizations.  We therefore looked
+at the number of interesting inputs (interesting because of new
+coverage of some kind) that \emph{actually compiled} as a rough
+approximation of how much behavior triggering deeper stages of
+compilation the fuzzing strategies found, and this number is reported in the
+final column of Table~\ref{tab:results}.  On average, both of our approaches
+found thousands more such inputs than AFL stock or AFL++.
+

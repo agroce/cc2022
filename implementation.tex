@@ -38,8 +38,8 @@ gain for in-practice fuzzing throughput.
 
 Of course, at first
 glance, it would appear that  ``smart'' strategies are not even
-possible in our context: there will often not be a parser that the
-mutation tool could use.  However, as we discuss below, recent work on
+possible for us: there will often not be a parser that the
+tool could use.  However, as we discuss below, recent work on
 multi-language syntax transformation enables an approach that can use
 \emph{syntax fragments} to provide a significant degree of intelligent
 mutation without specialized parsers for a compiler's input language,
@@ -124,7 +124,7 @@ merging them.
 
 \begin{figure}
   \raggedright
-  {
+  {\scriptsize
     {\bf Original code:}
 \begin{code}
 $\ldots$      
@@ -157,12 +157,6 @@ $\ldots$
       break;
     \end{code}
    {\bf Mutant 4:}
-\begin{code}
-$\ldots$      
-   while (x < y) \{
-   \}
- \end{code}
- {\bf Mutant 5:}
 \begin{code}
 $\ldots$      
    while (x < y) \{
@@ -219,11 +213,13 @@ of programs. We first preprocess all programs in the initial corpus to obtain
 this decomposition. For example, given the input program:
 
 \begin{figure}[ht!]
+ {\scriptsize
 \begin{code}
 function f(uint256 arg) public \{
     f(notfound);
 \}
 \end{code}
+}
 \end{figure}
 
 We obtain three templates by substituting expressions inside well-nested parentheses and blocks with a placeholder \texttt{\$1}:
@@ -231,35 +227,43 @@ We obtain three templates by substituting expressions inside well-nested parenth
 
 % https://github.com/rvantonder/compiler-fuzzer-experiments/blob/main/new/comby-mutation-server-on-sol-programs/templates/003_undeclared_name_is_not_fatal.389ddb46-000b-4577-8035-51b04b5a77c7.template.sol
 \begin{figure}[ht!]
+  {\scriptsize
 \begin{code}
 function f(uint256 arg) public \{\$1\} 
 \end{code}
+}
 \end{figure}
 
 \begin{figure}[ht!]
+  {\scriptsize
 \begin{code}
 function f(\$1) public \{
     f(notfound);
 \} 
 \end{code}
+}
 \end{figure}
 
 \begin{figure}[ht!]
+  {\scriptsize
 \begin{code}
 function f(uint256 arg) public \{
     f(\$1);
 \} 
 \end{code}
+}
 \end{figure}
 
 And three corresponding concrete fragments that are substituted for:
 
 \begin{figure}[ht!]
+  {\scriptsize
 \begin{code}
 uint256 arg
 f(notfound);
 notfound
 \end{code}
+}
 \end{figure}
 
 The decomposition is itself done by \texttt{Comby}, which extracts concrete

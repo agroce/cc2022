@@ -36,11 +36,6 @@ Grammar-based
 & Corpus of examples 
 & Inefficient, has trouble hitting ``deep'' bugs; may focus on ``bad'' code that should not compile but causes crashes 
   \\
-``No-fuss'' plus mutation-testing-dervied operators & \emph{Modified} 
-                                    AFL & Corpus of
-                                                             examples
-                                               & As row above, \emph{but much less
-                                                 so}\\
 \bottomrule
 \end{tabular}
 \caption{Compiler Fuzzing Techniques}
@@ -120,21 +115,13 @@ fuzzing has found many subtle compiler bugs, but
 suffers from two major drawbacks:
 
 \begin{enumerate}
-\item First, in most cases the methods used by such programs to modify
-  (mutate) inputs tend to take code that exercises interesting
-  compiler behavior, and transform it into code that is rejected in
-  the early stages of parsing.  That is, in most cases,
-  general-purpose fuzzers tend to take code and turn it into
-  ``non-code.''  This makes such fuzzing inefficient, and makes it
-  almost impossible for it to find bugs requiring a sequence of subtle
-  modifications of corpus programs.
+\item The methods used by fuzzers to mutate inputs tend to take code that exercises interesting
+  compiler behavior, and transform it into code that is rejected by
+  the parser.  This is inefficient, and makes it
+  almost impossible to find bugs requiring a sequence of subtle
+  modifications.
   \item Second, when such fuzzers do find bugs, the bugs are often
-    found in particularly un-humanlike inputs, such as code
-    containing non-printable bytes.  Bugs are often at the ``crash the
-    parser'' level rather than deeper semantic levels of the
-    compiler.  One symptom of this problem is that a large majority of
-    the ``interesting'' inputs produced in the process of
-    feedback-based fuzzing do not compile without error.
+    found in particularly un-humanlike inputs, often invalid programs.
   \end{enumerate}
 
   Combined together, these problems make most compiler fuzzing
@@ -142,8 +129,7 @@ suffers from two major drawbacks:
   terms of finding bugs and perhaps prone to find bugs that are not
   the most important and interesting compiler bugs.
   Table~\ref{tab:techniques} summarizes the existing widely-used
-  compiler fuzzing techniques and their weaknesses, and, in the final
-  row, shows our proposed contribution.
+  compiler fuzzing techniques and their weaknesses.
 
   Given that ``no-fuss'' fuzzing is widely used in large projects and
   is basically the \emph{only} option available in
