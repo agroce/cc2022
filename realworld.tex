@@ -15,7 +15,7 @@
                                       % Fuzz: about a week. Reports: 1 day
                     Zig               & 7d         & \zigUniqueFixedOrConfirmed       & 0                 & \zigUniqueConfirmed     & 0                      \\
 \midrule
-                    All               & ???        & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \solAValidDuplicates    \\
+                    All               &            & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \solAValidDuplicates    \\
 \bottomrule
 \end{tabular}
 \caption{Fuzzing campaign results for real world bugs.
@@ -23,12 +23,13 @@ Table shows all reported bugs to project's upstream issue
 tracker and status.  \cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed but unfixed bugs}. 
 \acirc~is \textbf{duplicate bug reports} (either reported
 duplicatively by us or another contributor).
-% \xmark~is \textbf{invalid} bug reports (deemed not a real bug, i.e., WONTFIX). 
 \textbf{Total} is the number of true, unique bugs reported and acknowledged by maintainers (\cmark~Fixed + \clock~Unfixed bugs).
 }
 \label{tab:campaign-fixes}
 \end{table}
 
+
+\iffalse
 \begin{table*}
 \centering
 \begin{tabular}{lcll}
@@ -49,6 +50,7 @@ duplicatively by us or another contributor).
 \caption{Detailed bug exemplars. \textbf{Time to fix} is the time taken from report to fix being merged.}
 \label{tab:bug-breakdown}
 \end{table*}
+\fi
 
 In addition to our controlled experiments fuzzing a version of each compiler before we reported any bugs, we ran real fuzzing campaigns, updating the compiler versions as new commits were made, and adjusting our corpus to include new tests, of various durations, on each compiler.  Two of these campaigns are ongoing (for Solidity and Fe) and have been well-supported and well-received by the compiler teams.
 

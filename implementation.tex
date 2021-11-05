@@ -48,40 +48,36 @@ at the cost of additonal time required to synthesize inputs.
 \subsubsection{Fast String-level Approximation of Mutation Operators}
 \label{strat-fast-string-level}
 
-\begin{figure}
-{\scriptsize
-  \begin{code}
-case 0: /* Semantic statement deletion */
-    strncpy(original, "\\n", MAX\_MUTANT\_CHANGE);
-    strncpy(replacement, "\\nif (0==1)\\n", MAX\_MUTANT\_CHANGE);
-    break;
-case 1:
-    strncpy(original, "(", MAX\_MUTANT\_CHANGE);
-    strncpy(replacement, "(!", MAX\_MUTANT\_CHANGE);
-    break;
-case 2:
-    strncpy(original, "==", MAX\_MUTANT\_CHANGE);
-    strncpy(replacement, "!=", MAX\_MUTANT\_CHANGE);
-    break;
-$\ldots$
-case 53: /* Swap comma delimited things case 4 */
-   delim\_swap(out\_buf, temp\_len, \&original, \&replacement, pos,
-                         ",", ",", ")");
-    break;
-case 54: /* Just delete a line */
-    delim\_replace(out\_buf, temp\_len, \&original, \&replacement,
-                             pos, "\\n", "\\n", "");
-    break;
-case 55: /* Delete something like "const" case 1 */
-    delim\_replace(out\_buf, temp\_len, \&original, \&replacement,
-                             pos, " ", " ", "");
-    break;    
- \end{code}
-    }
- \caption{Part of the Fast String-Based Approximation of Mutation
-   Operators}
-     \label{fig:foperators}
-
+\begin{figure}[h!]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+case (?{\color{blu}0}?): (?{\color{dkgreen}/* Semantic statement deletion */}?)
+  strncpy(original, (?{\color{dkred}\verb|"\n"|}?), MAX_MUTANT_CHANGE);
+  strncpy(replacement, (?{\color{dkred}\verb|"\nif (0==1)\n"|}?), MAX_MUTANT_CHANGE);
+  break;
+case (?{\color{blu}1}?):
+  strncpy(original, (?{\color{dkred}\verb|"("|}?), MAX_MUTANT_CHANGE);
+  strncpy(replacement, (?{\color{dkred}\verb|"(!"|}?), MAX_MUTANT_CHANGE);
+  break;
+case (?{\color{blu}2}?):
+  strncpy(original, (?{\color{dkred}\verb|"=="|}?), MAX_MUTANT_CHANGE);
+  strncpy(replacement, (?{\color{dkred}\verb|"!="|}?), MAX_MUTANT_CHANGE);
+  break;
+(?{\color{blu}\textbf{\texttt{...}}?)
+case (?{\color{blu}53}?): (?{\color{dkgreen}/* Swap comma delimited things case 4 */}?)
+ delim_swap(out_buf, temp_len, &original, 
+            &replacement, pos, (?{\color{dkred}\verb|","|}?), (?{\color{dkred}\verb|","|}?), (?{\color{dkred}\verb|")"|}?));
+  break;
+case (?{\color{blu}54}?): (?{\color{dkgreen}/* Just delete a line */?)
+  delim_replace(out_buf, temp_len, &original, 
+                &replacement, pos, (?{\color{dkred}\verb|"\n"|}?), (?{\color{dkred}\verb|"\n"|}?), (?{\color{dkred}\verb|""|}?));
+  break;
+case (?{\color{blu}55}?): (?{\color{dkgreen}/* Delete something like "const" case 1 */}?)
+  delim_replace(out_buf, temp_len, &original, 
+                &replacement, pos, (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|""|}?));
+  break;    
+\end{lstlisting}
+\caption{Part of the Fast String-Based Approximation of Mutation Operators}
+\label{fig:foperators}
 \end{figure}
 
 The core implementation of our technique is a text-based approximation
@@ -122,51 +118,57 @@ interesting inputs, in that the larger two inputs are, the
 more likely they will have, e.g., namespace conflicts that prevent
 merging them.
 
-\begin{figure}
-  \raggedright
-  {\scriptsize
-    {\bf Original code:}
-\begin{code}
-$\ldots$      
- int bar(int x, int y, int z) \{
+\begin{figure}[h!]
+\begin{subfigure}{.65\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+...
+ int bar(int x, int y, int z) {
    if (x < y)
-      return foo(x, y, z);
-   while (x < y) \{
-      x++;
-      z = z * 2;
-   \}
-\}
-\end{code}
-   {\bf Mutant 1:}
-\begin{code}
-$\ldots$      
-   if (x == y)
-      return foo(x, y, z);
-\end{code}
-   {\bf Mutant 2:}
-\begin{code}
-$\ldots$      
-   if (x < y)
-      return foo(x, z, y);
-\end{code}
-   {\bf Mutant 3:}
-\begin{code}
-$\ldots$      
-   while (x < y) \{
-      x++;
-      break;
-    \end{code}
-   {\bf Mutant 4:}
-\begin{code}
-$\ldots$      
-   while (x < y) \{
+     return foo(x, y, z);
+   while (x < y) {
      x++;
-   \}
- \end{code}
-
+     z = z * 2;
+   }
 }
-\caption{Mutations of  Simple Code}
+\end{lstlisting}
+\subcaption{Original code}
+\end{subfigure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{subfigure}{.45\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+...
+ if (x (?{\color{dkred}\textbf{\texttt{==}}}?) y)
+   return foo(x, y, z);
+\end{lstlisting}
+\end{subfigure}
+\hspace{.2em}
+\begin{subfigure}{.45\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+...
+ if (x (?{\color{dkred}\textbf{\texttt{<}}}?) y)
+   return foo(x, z, y);
+\end{lstlisting}
+\end{subfigure}
+\begin{subfigure}{.45\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+...
+ while (x < y) {
+   x++;
+   (?{\color{dkred}break;}?)
+\end{lstlisting}
+\end{subfigure}
+\hspace{.2em}
+\begin{subfigure}{.45\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
+...
+ while (x < y) {
+   x++; 
+ }
+\end{lstlisting}
+\end{subfigure}
+\subcaption{Four mutations}
 \label{fig:fopexample}
+\caption*{\normalsize\textbf{Figure 2.} Mutations of  Simple Code} % HACK: hardcoded figure so that subcpations work, don't know how to override subcaptions.
 \end{figure}
 
 \subsubsection{Smart Syntax-Aware Mutation}
@@ -201,7 +203,7 @@ parser for any language, but it \emph{is} language-aware, in that it recognizes
 a small set of language-specific constructs (e.g., syntax to identify quoted
 strings or comments) to accurately parse code blocks. \texttt{Comby} supports
 over 50 languages, and uses a generic parser for unsupported languages like custom
-DSLs.  Comby is likely to perform ``well-enough'' for any language
+DSLs. \texttt{Comby} is likely to perform ``well-enough'' for any language
 anyone is likely to want to input to a compiler.
 
 \texttt{Comby} does not have C bindings, so we expose its transformation
@@ -210,63 +212,79 @@ in the fuzzer's hot loop to request inputs. We use the \texttt{Comby} server in
 a mutation mode where it \emph{generates} inputs from a decomposition of
 \emph{templates} and \emph{concrete fragments} obtained from the initial corpus
 of programs. We first preprocess all programs in the initial corpus to obtain
-this decomposition. For example, given the input program:
+this decomposition. The following figure illustrates the decomposition of an
+example Zig program.
 
-\begin{figure}[ht!]
- {\scriptsize
-\begin{code}
-function f(uint256 arg) public \{
+\begin{figure}[h!]
+\begin{subfigure}{\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=1em,xrightmargin=14em]
+function f(uint256 arg) public {
     f(notfound);
-\}
-\end{code}
 }
+\end{lstlisting}
+\vspace{-1em}
+\end{subfigure}
+\begin{tikzpicture}[node distance=2cm]
+% nodes
+\node (Q) at (3, 1.2) {};
+\node (C) at (3, .5) {decompose};
+\node (A) at (0, 0) {\tt templates};
+\node (D) at (5.5, 0) {\tt fragments};
+
+% arrows
+\draw[->] (Q) edge (C);
+\draw[->, to path={-| (\tikztotarget)}]
+  (C) edge (A)
+  (C) edge (D);
+\end{tikzpicture}
 \end{figure}
 
-We obtain three templates by substituting expressions inside well-nested parentheses and blocks with a placeholder \texttt{\$1}:
-
-
-% https://github.com/rvantonder/compiler-fuzzer-experiments/blob/main/new/comby-mutation-server-on-sol-programs/templates/003_undeclared_name_is_not_fatal.389ddb46-000b-4577-8035-51b04b5a77c7.template.sol
-\begin{figure}[ht!]
-  {\scriptsize
-\begin{code}
-function f(uint256 arg) public \{\$1\} 
-\end{code}
-}
-\end{figure}
-
-\begin{figure}[ht!]
-  {\scriptsize
-\begin{code}
-function f(\$1) public \{
-    f(notfound);
-\} 
-\end{code}
-}
-\end{figure}
-
-\begin{figure}[ht!]
-  {\scriptsize
-\begin{code}
-function f(uint256 arg) public \{
-    f(\$1);
-\} 
-\end{code}
-}
-\end{figure}
-
-And three corresponding concrete fragments that are substituted for:
-
-\begin{figure}[ht!]
-  {\scriptsize
-\begin{code}
-uint256 arg
+\begin{figure}[h!]
+\vspace{-2.0em}
+\begin{subfigure}{.64\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
+function f(uint256 arg) public {(?{\color{dkgreen}\$1}?)}
+\end{lstlisting}
+\end{subfigure}\hspace{.5em}
+\begin{subfigure}{.26\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
 f(notfound);
+\end{lstlisting}
+\end{subfigure}
+
+\begin{subfigure}{.64\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
+function f((?{\color{dkgreen}\$1}?)) public {
+    f(notfound);
+} 
+\end{lstlisting}
+\end{subfigure}\hspace{.5em}
+\begin{subfigure}{.26\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
+uint256 arg
+\end{lstlisting}
+\vspace{1.5em}
+\end{subfigure}
+
+\begin{subfigure}{.64\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
+function f(uint256 arg) public {
+    f((?{\color{dkgreen}\$1}?));
+} 
+\end{lstlisting}
+\end{subfigure}\hspace{.5em}
+\begin{subfigure}{.26\columnwidth}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=0em]
 notfound
-\end{code}
-}
+\end{lstlisting}
+\vspace{1.5em}
+\end{subfigure}
 \end{figure}
 
-The decomposition is itself done by \texttt{Comby}, which extracts concrete
+A ``decompose'' operation yields three \texttt{templates} in the left column
+({\tt\color{dkgreen}\$1} are placeholders for future substitution) and extracts
+three corresponding concrete \texttt{fragments}, shown in the right column. 
+The ``decompose'' operation is done with \texttt{Comby}, which extracts concrete
 values inside parentheses, braces, and square brackets (patterns
 \texttt{(\$expr)}, \texttt{\{\$expr\}}, \texttt{[\$expr]} respectively). Note
 that our approach can be customized to extract \emph{any} kind of syntactically
@@ -288,8 +306,8 @@ In addition to generating inputs, the server can also apply syntax-aware
 operators. In practice, our server architecture adds considerable overhead (we
 discuss this in Section~\ref{eval}) and is thus slow in applying
 on-the-fly mutations, and in that sense less
-appealing than the string-level mutation described in Section~\ref{strat-fast-string-level}. Our
-results in Section~\ref{eval} \emph{do} show, however, that generative
+appealing than the string-level mutation. Our
+results in Section~\ref{eval} do show, however, that generative
 syntax-aware input manipulation demonstrates compelling utility despite
 incurring significant slowdown.\footnote{We are actively improving the tooling
 architecture, which is generally a matter of engineering rather than

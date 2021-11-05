@@ -24,7 +24,7 @@ of C++ and Zig itself.  Solidity is a very widely used language, since
 it is the primary language used for smart contracts on the Ethereum
 blockchain.  Move and Fe are experimental smart contract languages,
 and Zig is an up-and-coming systems language operating in
-the same space as C, Rust, Nim, and other statically-typed languges
+the same space as C, Rust, Nim, and other statically-typed languages
 with manual memory management.
 
 \noindent \textbf{Fuzzer configurations.} We perform a comparative evaluation
@@ -45,9 +45,9 @@ successful at configuring \texttt{AFL++} for three of our four compilers
 Note, however, that since our technique is not implemented in \texttt{AFL++}, the
 comparison is incongruent, and potentially handicapped by orthogonal
 \texttt{AFL++} improvements that may stand to boost our
-approach.\footnote{Indeed, recent improvements in \texttt{AFL++}, not available
-at the time of our first implementation, compel us to consider the
-reimplemnting our approach in \texttt{AFL++}.}
+approach.\footnote{Indeed, recent improvements, not available
+during our first implementation, compel us to consider the
+reimplementing our approach in \texttt{AFL++}.}
 
 The third and fourth configurations we compare are both strategies based on our
 new approaches in Section~\ref{implementation}. The third configuration applies
@@ -74,8 +74,9 @@ configuration for each compiler to control for variability and randomness.  We
 ran four configurations for the Solidity, Move, and Fe compilers (where
 \texttt{AFL++} is included), and three configurations for Zig (\texttt{AFL++})
 excluded) for a total of 112 trials.  A single trial comprises 24 hours of
-fuzzing on a single core, starting from the initial input corpus.  %
-16*3*24+16*4*24 = 2,688 hours We chose 24 hour trials because our intent is to
+fuzzing on a single core, starting from the initial input corpus.  
+% 16*3*24+16*4*24 = 2,688 hours 
+We chose 24 hour trials because our intent is to
 answer whether we can observe (relatively immediate) effects of strategies that
 aim to surface deeper bugs.  Our choice aligns with existing work that shows
 finding new vulnerabilities earlier during a fuzzing campaign is proportionally
@@ -116,9 +117,8 @@ program fragments.  The remaining project corpora are as follows:
 \label{tab:inputs}
 \end{table}
 \vspace{-3em}
-{\color{red} TODO Rijnard: come back and mention average
-time to generate templates/fragments. It's somewhere in the range of 15 mins to
-an hour per project}. 
+{\color{red} TODO Rijnard: mention average
+time to generate templates/fragments.}
 
 For fuzzer trials using the 33\% syntax-aware mutation strategy, we start fuzzing
 with an empty, ``zero'' program and rely entirely on the probbility to
@@ -139,7 +139,7 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
 % FE        /home/rijnard/0-experiments-feb/fe-programs                          @ 1ea2206e3d10e77163f1a01bee05088358d8ef23
 %           /home/rijnard/0-experiments-feb/comby-mutation-server-fe/fragments
 
-
+ 
 \subsection{Results}
 \label{exp-results}
 
@@ -158,9 +158,9 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
                                      & \tt \small      text-mutation               &  7.81   & 7         & 11          & 30.3           & 14.3             & 55.65\ph{a}       & 5.48                \\ 
                                      & \tt \small      splice-mutation             & 11.81   & 7         & 14          & 16.0           & 16.8             & 57.33\ph{a}       & 5.24                 \\ 
 \midrule
-                    \mr{4}{Move}     & \tt \small      AFL-basline                 & 7.19    & 6         & 8           & 56.9           & 4.9              & 63.23\ph{a}       &                             \\ 
-                                     & \tt \small      AFL++ 2.54b                 & ????    & ?         & ?           & ????           & ???              & ?????             &                          \\ 
-                                     & \tt \small      text-mutation               & 8.31    & 7         & 9           & 61.2           & 6.0              & 62.27\ph{a}       &                         \\ 
+                    \mr{4}{Move}     & \tt \small      AFL-baseline                & 7.19    & 6         & 8           & 56.9           & 4.9              & 63.23\ph{a}       &                             \\ 
+                                     & \tt \small      AFL++ 2.64c$^\ddagger$      & 6.38    & 6         & 7           & 48.8           & 4.5              & 62.40\ph{a}       &                          \\ 
+                                     & \tt \small      text-mutation               & 8.31    & 7         & 8           & 61.2           & 6.0              & 62.27\ph{a}       &                         \\ 
                                      & \tt \small      splice-mutation             & 6.06    & 5         & 7           &  7.2           & 5.0              & 63.18\ph{a}       &                         \\ 
 \midrule
                     \mr{4}{Fe}       & \tt \small      AFL-baseline                & 6.56    & 5         & 7           & 24.5           & 3.5              & 27.91\ph{a}       &                          \\ 
@@ -182,7 +182,7 @@ input. Stock AFL manipulates the input the remaining 25\% of the
 time. \texttt{splice-mutation} is a hybrid approach that (1) applies
 mutation operators as in \texttt{text-mutation} with probability 33\%;
 (2) synthesizes a syntax-aware input with template (splice) with
-probability 33\%; and (3) uses stock AFL the remaining 34\% of the time.}
+probability 33\%; and (3) uses stock AFL the remaining 34\% of the time. $\ddagger$: some discoveries we didn't bucket yet}
 \label{tab:results}
 \end{table*}
 

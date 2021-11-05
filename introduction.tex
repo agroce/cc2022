@@ -10,9 +10,10 @@ goes back to such foundational papers as McKeeman's introduction of
 the idea of differential testing in the context of random testing of
 compilers~\cite{Differential}.
 
+\small
 \begin{table*}
 \centering
-\begin{tabular}{p{45mm}p{30mm}p{30mm}p{45mm}}
+\begin{tabular}{p{35mm}p{31mm}p{30mm}p{67mm}}
 \toprule
 \bf Technique & \bf Tool & \bf Requirements    & \bf Weaknesses \\
               &          & \bf from Developers &                \\
@@ -32,7 +33,7 @@ Grammar-based
 % \hline
 \rowcolor{LLGray}
 ``No-fuss'' mutation-based 
-& Off-the-shelf fuzzer (e.g., AFL) 
+& Off-the-shelf fuzzer \newline (e.g., AFL) 
 & Corpus of examples 
 & Inefficient, has trouble hitting ``deep'' bugs; may focus on ``bad'' code that should not compile but causes crashes 
   \\
@@ -41,6 +42,7 @@ Grammar-based
 \caption{Compiler Fuzzing Techniques}
 \label{tab:techniques}
 \end{table*}
+\normalsize
 
 As McKeeman's work suggests, one core approach to testing compilers is
 based on
