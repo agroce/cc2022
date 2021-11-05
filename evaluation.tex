@@ -211,6 +211,7 @@ work~\cite{semantic-crash-bucketing,Taming}, general software development
 practice, and our manual inspection). I.e., \textbf{Unique bugs} is a precise
 ground truth of truly unique bugs.
 
+\begin{sloppypar}
 In general, either our \texttt{text-mutation} or \texttt{splice-mutation}, or
 both, does better than existing tools. Our strongest result shows that the
 hybrid \texttt{splice-mutation} strategy discovers roughly 8 more bugs than
@@ -225,7 +226,9 @@ bug,\footnote{Commit
 in \texttt{github.com/ethereum/solidity.}} thinking that every new crash is
 interesting. Our approaches didn't fall prey to this pathological behavior, and
 always found at least 7 unique bugs, which is likely accounted for by
-variability in input mutation. Our weakest result reveals two related insights:
+variability in input mutation. Our weakest result reveals two related
+insights:
+\end{sloppypar}
 
 \begin{itemize}
 \item One of our strategies may not perform better than stock approaches. This is the case for Fe, where \\ \texttt{text-mutation} performs only on par with \texttt{AFL}. Here, \texttt{splice-mutation} is the only strategy to perform slightly better than other tools.
@@ -297,7 +300,8 @@ bugs of the total set varies little compared to \texttt{AFL++}. On the other han
 looking at the best-performing bug finder on Fe, \texttt{splice-mutation}
 generates a similar number of compilable programs to other tools, but with a slightly
 higher ratio. It is also interesting to take this number into consideration
-with the number of executions, since fewer executions particularly for the \texttt{splice-mutation}
-strategy. This suggests that the ``fast or smart'' tradeoff surfaces in terms of
+with the number of executions, particularly for the \texttt{splice-mutation}
+strategy. The relationship suggests that the ``fast or smart'' tradeoff surfaces in terms of
 compilable programs during fuzzing, i.e., chosen strategies may boost the
-absolute number or percentage of compiling programs and yield more bugs.
+absolute number or percentage of compiling programs and yield more
+bugs or higher quality bugs.
