@@ -1,1 +1,18 @@
 \section{Conclusions}
+
+Using automated methods to find bugs is an important part of modern
+compiler development.  For a variety of reasons, the use of
+off-the-shelf fuzzers, especially AFL, is the most widely used such
+appproach.  Mutation-based fuzzers, however, were originally used to
+test binary formats, and their heritage limits their effectiveness for
+fuzzing compilers.  Most solutions to this problem either place significant
+burden on compiler developers, or are ineffective, or both.  We show
+that using ideas from mutation testing it is possible to significantly
+improve AFL-based fuzzing of compilers without forcing developers to
+provide grammars or a dictionary.  One of our two configurations
+performed best for all compilers we investigated, in experiments,
+sometimes dramatically so (finding more than twice as many bugs on
+average as the best version of un-augmented AFL).  Using our approach
+we reported more than 100 previously unknown bugs, that have been
+fixed as a result, in important
+compiler projects.
