@@ -11,11 +11,11 @@
                                       % Fuzz: about a week Reports: Jan 27 to Feb 9 2021.
                     Move              & 20d        & \movUniqueFixedOrConfirmed       & \movUniqueFixed   & \movUniqueConfirmed     & 0                      \\
                                                                                                                                     % 63 submittd, 49 are fixed or confirmed, are the other 14 wrong or dups?
-                    Fe                & 9mo 6d      & \feUniqueFixedOrConfirmed        & \feUniqueFixed    & \feUniqueConfirmed      & 6      \\
+                    Fe                & 9mo 6d      & \feUniqueFixedOrConfirmed        & \feUniqueFixed    & \feUniqueConfirmed      & \feValidDuplicates \\
                                       % Fuzz: about a week. Reports: 1 day
-                    Zig               & 7d         & \zigUniqueFixedOrConfirmed       & 0                 & \zigUniqueConfirmed     & 0                      \\
+                    Zig               & 7d         & \zigUniqueFixedOrConfirmed       & \zigUniqueFixed   & 0                       & 0                      \\
 \midrule
-                    All               &            & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \solAValidDuplicates    \\
+                    All               &            & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \allValidDuplicates    \\
 \bottomrule
 \end{tabular}
 \caption{Fuzzing campaign results for real world bugs.

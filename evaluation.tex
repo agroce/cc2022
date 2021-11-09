@@ -1,56 +1,59 @@
 \section{Evaluation}
 \label{eval}
 
-We ran a series of controlled experiments to evaluate the effectiveness of two
-new strategies based on our approaches in Sections~\ref{strat-fast-string-level}
-and~\ref{strat-syntax-aware} for improving on ``no-fuss'' compiler fuzzing. Our
-main goal is to answer to what extent these low-effort strategies demonstrate
-significant benefit in the domain of compiler fuzzing, and how they influence
-fuzzer behavior and performance.
+We ran a a controlled experiment to evaluate the effectiveness of two
+new strategies based on our approaches in
+Sections~\ref{strat-fast-string-level} and~\ref{strat-syntax-aware} to
+improve ``no-fuss'' compiler fuzzing. Our main goal is to answer to what
+extent these low-effort strategies demonstrate significant benefit in the
+domain of compiler fuzzing, and how they influence fuzzer behavior and
+performance.
 
 Section~\ref{exp-setup} describes our experimental setup.
 Section~\ref{exp-results} summarizes our results, which compares our strategies
-against stock AFL and AFL++ fuzzers on four actively-developed compilers. 
+against stock \texttt{AFL} and \texttt{AFL++} fuzzers on four actively-developed compilers. 
 
 \subsection{Experimental Setup}
 \label{exp-setup}
 
-We evaluated our approach using four compilers, for the languages
-Solidity,\footnote{https://docs.soliditylang.org/}
-Move,\footnote{https://move-book.com/} and Fe\footnote{https://fe-lang.org/}
+We evaluate our approach on four compilers, for the languages
+Solidity,
+Move, and Fe\footnote{See
+        \href{https://docs.soliditylang.org}{soliditylang.org},
+        \href{https://move-book.com}{move-book.com}, and
+        \href{https://fe-lang.org}{fe-lang.org} respectively.}
 (smart contract languages) and the trending general-purpose language
-Zig.\footnote{https://ziglang.org}.  
+Zig.\footnote{https://ziglang.org}
 Solidity is a high-profile language for writing smart contracts on the Ethereum
 (the first blockhain to support smart contracts) and widely used. Fe
 is an experimental statically-typed language for Ethereum smart
 contracts. Move is Facebook's smart contract language, developed for the
-industrial blockchain solution Diem.\footnote{https://www.diem.com/en-us/} Zig
+industrial blockchain solution Diem.\footnote{\href{https://www.diem.com/en-us/}{diem.com}} Zig
 is an up-and-coming systems language operating in the same space as C, Rust,
 Nim, and other statically-typed languages with manual memory management.
 Move and Fe are implemented in Rust, Solidity is implemented in C++, and Zig is
 implemented in a mix of C++ and Zig itself. 
 
 \noindent \textbf{Fuzzer configurations.} We perform a comparative evaluation
-of four fuzzing configurations.  The first configuration is stock \texttt{AFL},
-our baseline of comparison across all projects. Because our approach is
-integrated directly into stock \texttt{AFL}, we're comparing to the baseline
-\emph{implementation} (a desirable practice for sound comparative fuzzer
-evaluations~\cite{BoehmeCR21}).
+of four fuzzing configurations.  The first configuration is stock \texttt{AFL}
+in "quick \& dirty" mode, our baseline of comparison across all projects.
+Because our approach is integrated directly into stock \texttt{AFL}, we're
+comparing to the baseline \emph{implementation} (a desirable practice for sound
+comparative fuzzer evaluations~\cite{BoehmeCR21}).
 %Citation says: > If possible, the proposed technique (e.g., an improvement to
 %gray > box fuzzing) is implemented directly > into the baseline (e.g., AFL).
 Although \texttt{AFL} continues to be a de facto industry standard for
 ``no-fuss'' fuzzing, numerous community-driven improvements have been made to
 the \texttt{AFL++} project, which can often outperform stock \texttt{AFL}.
-Therefore, for extra measure, we sought to compare our results to a second
-fuzzing configuration using the existing \texttt{AFL++} tool. We were
-successful at configuring \texttt{AFL++} for three of our four compilers
-(excluding Zig), and report our results in Section~\ref{exp-results}.
-Note, however, that since our technique is not implemented in \texttt{AFL++}, the
-comparison is incongruent, and potentially handicapped by orthogonal
-\texttt{AFL++} improvements that may stand to boost our
-approach.\footnote{Indeed, recent improvements, not available
-during our first implementation, compel us to consider the
-reimplementing our approach in \texttt{AFL++}.}
+Therefore, for extra measure, we seek to compare our results to a second
+fuzzing configuration using the existing \texttt{AFL++} tool. We successfully
+configured \texttt{AFL++} for three of our four compilers (excluding Zig), and
+report our results in Section~\ref{exp-results}.  Note, however, that since our
+technique is not implemented in \texttt{AFL++}, the comparison is incongruent,
+and potentially handicapped by orthogonal \texttt{AFL++} improvements that may
+stand to boost our approach.\footnote{Indeed, recent improvements, not
+available during our first implementation, compel us to implement our approach
+in \texttt{AFL++}.}
 
 The third and fourth configurations we compare are both strategies based on our
 new approaches in Section~\ref{implementation}. The third configuration applies
@@ -75,7 +78,7 @@ corpora).
 \noindent \textbf{Fuzzing trials and duration.} We ran 16 trials per fuzzing
 configuration for each compiler to control for variability and randomness.  We
 ran four configurations for the Solidity, Move, and Fe compilers (where
-\texttt{AFL++} is included), and three configurations for Zig (\texttt{AFL++})
+\texttt{AFL++} is included), and three configurations for Zig (\texttt{AFL++}
 excluded) for a total of 112 trials.  A single trial comprises 24 hours of
 fuzzing on a single core, starting from the initial input corpus.  
 % 16*3*24+16*4*24 = 2,688 hours 
@@ -86,14 +89,14 @@ finding new vulnerabilities earlier during a fuzzing campaign is proportionally
 cheaper (more likely) than long-running campaigns~\cite{fuzzexp}. I.e., if our
 strategies exhibit any significant competitive advantage, we expect it
 to manifest
-early for a controlled setting (within 24 hours).  In aggregate, our
+early in a controlled setting (within 24 hours).  In aggregate, our
 experiments represent 112 days of fuzzing to demonstrate fuzzer performance for
 quickly surfacing bugs with our ``no-fuss'' enhancements on these compilers.
 Each project was fuzzed at an early commit before we had reported bugs to the
 upstream repository.
 
 \noindent 
-\textbf{Input corpora.} All fuzzer trials ran over inputs derived from the
+\textbf{Input corpora and preprocessing} All fuzzer trials ran over inputs derived from the
 project's own source tree. A summary is shown in Table~\ref{tab:inputs}. For
 example, the Solidity base corpus is 2,447 \textbf{Files} ending in
 \texttt{.sol} in the \texttt{test/libsolidity} subdirectory.  For fuzzer trials
@@ -119,17 +122,32 @@ program fragments.  The remaining project corpora are as follows:
 \caption{Summary of input corpora for four compilers.}
 \label{tab:inputs}
 \end{table}
-\vspace{-3em}
-{\color{red} TODO Rijnard: mention average
-time to generate templates/fragments.}
+\vspace{-1em}
+% ./extract.sh .sol .go  3425.20s user 1130.89s system 110% cpu 1:08:47.10 total
+% ./extract.sh .move .rs  6679.28s user 1923.79s system 102% cpu 2:19:58.64 total
+% ./extract.sh .fe .generic  82.36s user 29.65s system 112% cpu    1:39.89 total
+% ./extract.sh .zig .zig  1632.26s user 549.67s system 110% cpu 32:52.66 total
 
-For fuzzer trials using the 33\% syntax-aware mutation strategy, we start fuzzing
-with an empty, ``zero'' program and rely entirely on the probbility to
-introduce newly generated inputs from the \textbf{Templ.} and \textbf{Frag.}
-over time. This gives ample opportunity to potentially generate new
-combinations of inputs at runtime without processing seed inputs. All other
-configurations start with the seed \textbf{Files}, which \texttt{AFL} processes
-to discover ones with ``interesting'' coverage properties.
+Creating \textbf{Templ.} and \textbf{Frag.} input components incurs some
+preprocessing per project. This time ranges from less than 2 minutes (for Zig)
+to 2 hours (for Move). Our setup does not attempt to adjust the 24 hour fuzzing
+time to compensate for this preprocessing, because in a real world setting this
+(relatevely small) preprocessing cost  is greatly amortized over the time of a
+real fuzzing campaign that typically lasts much longer than 24 hours.  Even in
+our experimental setup, this cost, which would account for for less than 5\% of
+the fuzzing time on average for a single trial, is amortized over multiple 24
+hour trials, and thus difficult to adjust for fairly. A benefit of this upfront
+per-project process means that our fuzzer trials using the 33\% syntax-aware
+mutation strategy start fuzzing with an empty, ``zero'' program and rely
+entirely on the probability to potentially generate new combinations inputs
+from the \textbf{Templ.} and \textbf{Frag.} at runtime. This is architecturally
+distinct from our other \texttt{AFL} fuzzing configurations (both the baseline
+and pure string-level mutations) that run its own preprocessing bundled with
+AFL, filtering initial inputs (\textbf{Files}) based on code coverage (which may
+take seconds to minutes depending on corpus size).
+In brief, preprocessing times in our configurations are not directly
+comparable, but it is reasonable to assume that the cost for all
+configurations converge to zero in realistic, long-running campaigns.
 
 \noindent \textbf{Hardware.} Each trial ran on Ubuntu 18.04, on a single core
 of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
@@ -171,9 +189,9 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, and with up to 30GB free RAM.
                                      & \tt \small      text-mutation               & 6.50    & 5         & 7           & 17.9           & 3.3              & 27.84\ph{a}       & 0.42 & 13.3              \\ 
                                      & \tt \small      splice-mutation             & 6.94    & 6         & 9           &  5.0           & 2.6              & 27.83\ph{a}       & 0.46 & 15.2              \\ 
 \midrule
-                    \mr{3}{Zig}      & \tt \small      AFL-baseline                & ????    & ?         & ??          & 2.2            & 3.3              & 40.99\ph{a}       & 0.13 &  3.3             \\ 
-                                     & \tt \small      text-mutation               & ????    & ?         & ??          & 2.1            & 3.3              & 40.95\ph{a}       & 0.13 &  3.3           \\ 
-                                     & \tt \small      splice-mutation             & ????    & ?         & ??          & 1.3            & 3.9              & 41.82\ph{a}       &      &                 \\ 
+                    \mr{3}{Zig}      & \tt \small      AFL-baseline                & 2.56    & 1         & 5           & 2.2            & 3.3              & 40.99\ph{a}       & 0.13 &  3.3             \\ 
+                                     & \tt \small      text-mutation               & 2.38    & 0         & 4           & 2.1            & 3.3              & 40.95\ph{a}       & 0.13 &  3.3           \\ 
+                                     & \tt \small      splice-mutation             & 7.56    & 0         & 13          & 1.3            & 3.9              & 41.82\ph{a}       & 0.27 &  7.0            \\ 
 \bottomrule
 \end{tabular} 
         \caption{Main results of controlled experiment. We fuzzed each project for 16 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AF++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
@@ -186,7 +204,8 @@ time. \texttt{splice-mutation} is a hybrid approach that (1) applies
 mutation operators as in \texttt{text-mutation} with probability 33\%;
 (2) synthesizes a syntax-aware input with template (splice) with
         probability 33\%; and (3) uses stock AFL the remaining 34\% of the time. 
-{\color{red} Rijnard TODO: explain $\dagger$ (instrumentation version) and $\ddagger$ (some discoveries we didn't bucket yet)}}
+        $\dagger$The instrumentation for a more recent version \texttt{3.15a} of \texttt{AFL++} differs from our baseline \texttt{AFL} version and is the likely reason for a difference in reported coverage \%.
+}
 \label{tab:results}
 \end{table*}
 
@@ -204,18 +223,25 @@ average number over 16 trials for a project in that configuration.
 \texttt{AFL-baseline} is stock \texttt{AFL}'s results. For projects Solidity,
 Move, and Fe, we include \texttt{AFL++}'s results. The \texttt{AFL++} version
 varies based on the version compatible with a project's commit at which we
-started fuzzing. All \textbf{Unique Bugs} are determined by classifying crashing
-inputs by bug-fixing commits (we assume a single commit fixes a single bug, an
-assumption that is consistent with prior
-work~\cite{semantic-crash-bucketing,Taming}, general software development
-practice, and our manual inspection). I.e., \textbf{Unique bugs} is a precise
-ground truth of truly unique bugs.
+started fuzzing. All \textbf{Unique Bugs} for Solidity, Move, and Fe are
+determined by classifying crashing inputs by bug-fixing commits, except for at
+most 2 unique, yet unfixed Solidity bugs manually inspected by an expert
+author. We assume a single commit fixes a single bug, an assumption that is
+consistent with prior work~\cite{semantic-crash-bucketing,Taming}, general
+software development practice, and our manual inspection). I.e., \textbf{Unique
+bugs} is a precise ground truth of truly unique bugs. \textbf{Unique Bugs} for
+Zig are largely unfixed at the time of writing, and are instead comprehensively
+classified by an expert author manual inspecting every crashing input and its
+error message. Not reported in the table, a proportion of (potentially
+duplicative) crashing inputs for \texttt{Move} were found by all configurations
+that remain untriaged, because we could not find a bug-fixing commit, or
+because no fix exists yet.
 
 \begin{sloppypar}
 In general, either our \texttt{text-mutation} or \texttt{splice-mutation}, or
-both, does better than existing tools. Our strongest result shows that the
+both, does better than existing tools. One of our strongest results shows that the
 hybrid \texttt{splice-mutation} strategy discovers roughly 8 more bugs than
-\texttt{AFL} ($\approx3\times$ as many) on Solidity on average. For Solidity,
+\texttt{AFL} (approximately 3$\times$ as many) on Solidity on average. For Solidity,
 the simple approach of \texttt{text-mutation} also performs well, discovering
 roughly 4 more bugs than AFL. Especially interesting, the predictability of
 \texttt{AFL} and \texttt{AFL++} bug discovery on Solidity varies highly,
@@ -226,7 +252,13 @@ bug,\footnote{Commit
 in \texttt{github.com/ethereum/solidity.}} thinking that every new crash is
 interesting. Our approaches didn't fall prey to this pathological behavior, and
 always found at least 7 unique bugs, which is likely accounted for by
-variability in input mutation. Our weakest result reveals two related
+variability in input mutation. Another strong result is the discovery of more than $2\times$
+as many unique bugs found via \texttt{splice-mutation} in Zig compared to other approaches.
+Somewhat similar to Solidity, \texttt{splice-mutation} on Zig overcomes
+a pathological behavior where usual \texttt{AFL} fuzzing finds
+extremely large inputs ``insteresting'', but that do not actually crash
+the compiler. This behavior affects all configurations (accounting for 0 unique bugs for some trials with \texttt{text-mutation} and \texttt{splice-mutation}) but is effectively suppressed on average by variation created with \texttt{splice-mutation}. We expand more on the qualitative appeal of our approaches below.
+On the whole, our weakest result reveals two related
 insights:
 \end{sloppypar}
 
@@ -243,14 +275,14 @@ does perform marginally better, despite being more than 3 times \emph{slower}
 than all other approaches by average number of executions (\textbf{Avg.
 Execs}). Conversely, the quick \texttt{text-mutation} approach does best in the
 Move project, where the \texttt{splice-mutation} hybrid variety is just too
-slow ($\approx8\times$ slower) to compensate for its ``smart''
+slow (almost 8$\times$ slower) to compensate for its ``smart''
 benefit.
 \end{sloppypar}
 
 \textbf{A look at quick and exclusive findings.} Perhaps the most compelling
 case for choosing ``fast or smart'' mutation enhancements is the ability to
 discover bugs that are exclusive to a particular strategy (requiring a rather
-unique alteration or combination of inputs to find), or to identify unique,
+unique alteration of inputs to find), or to identify unique,
 not-so-shallow bugs \emph{quickly}. In the former case, for instance, our results
 showed that the slightly better bug discovery of \texttt{splice-mutation} in Fe
 could be attributed to a \emph{consistent} discovery of a Rust borrow error
@@ -262,28 +294,30 @@ hybrid approach on Solidity consistently discovers a particular contract
 bug\footnote{Report ommitted for anonymity} while it is never discovered by the
 \texttt{text-mutation} strategy. Yet notably, during the process of running long
 term campaigns (Section~\ref{real-world}), this same bug \emph{was} eventually discovered by the pure
-\texttt{text-mutation} approach after some period longer than 24 hours. In
-these cases, evidence points to hybrid approaches leading to rapid and
-exclusive discoveries of certain bugs arising from 
-the combination of simple and complex mutations on the input space.
+\texttt{text-mutation} approach after some period longer than 24 hours.
+% TODO rijnard: statistical significance plug here. => look at qualitative properties
+% Our Zig results proves especially interesting because of unique ness.
+In these cases, evidence points to hybrid approaches leading to rapid and
+exclusive discoveries of certain bugs arising from the combination of simple
+and complex mutations on the input space.
 
-While finding only 1 additional bug or 1.5 additional bugs may, at
-first, seem like a modest gain, it is important to recall that in
-fuzzing, finding additional bugs is \emph{extremely hard}.  B\"{o}hme
-and Falk~\cite{fuzzexp} show that ``[W]ith twice the machines, we can
-find \emph{all known} bugs in half the time. Yet, finding linearly
-\emph{more} bugs in the same time requires exponentially more
-machines'' \cite{fuzzexp}.  That is, finding even one more bug may be
-very costly.  Moreover, as our real-world results below show, over
-time the ability to detect additional bugs adds up to a substantial
-number of new bugs detected, even for a compiler being aggressively
-fuzzed by numerous other techniques, using more computing power.
+While finding only 1 additional bug or 1.5 additional bugs in some cases may,
+at first, seem like a modest gain, it is important to recall that in fuzzing,
+finding additional bugs is \emph{extremely hard}.  B\"{o}hme and
+Falk~\cite{fuzzexp} show that ``[W]ith twice the machines, we can find
+\emph{all known} bugs in half the time. Yet, finding linearly \emph{more} bugs
+in the same time requires exponentially more machines'' \cite{fuzzexp}.  That
+is, finding even one more bug may be very costly.  Moreover, as our real-world
+results in Section~\ref{real-world} show, over time the ability to detect
+additional bugs adds up to a substantial number of new bugs detected, even for
+a compiler being aggressively fuzzed by numerous other techniques, using more
+computing power.
 
 \textbf{Properties of mutated inputs.} We also examined the distinct number of
 \emph{compiling} inputs in the final queue (the set of all interesting,
 non-crashing, inputs AFL produced).  We investigated this because the number of
 paths found (cf. \textbf{Avg Paths}, Table~\ref{tab:results}) is somewhat
-uninformative for compilers, where in general paths that expose peculiar parse
+uninformative for compilers, wherein general paths that expose peculiar parse
 errors are less interesting for testing the compiler's internals than paths
 involving different behavior in the stages of compilation after parsing.  The
 most serious compiler bugs, with potential to produce \emph{wrong code}, break
@@ -294,7 +328,7 @@ compiled} (\textbf{Compiles} in Table~\ref{tab:results}) as a rough
 approximation of how much behavior triggering deeper stages of compilation the
 fuzzing strategies found. On average, our approaches tend to do better either
 in the absolute number of compiling bugs (K) or percentage of compiling bugs
-(\%) when the values of other approaches ar steady. For example, our approaches
+(\%) when the values of other approaches are steady. For example, our approaches
 find thousands more such inputs in Solidity, while the percentage of compiling
 bugs of the total set varies little compared to \texttt{AFL++}. On the other hand,
 looking at the best-performing bug finder on Fe, \texttt{splice-mutation}
