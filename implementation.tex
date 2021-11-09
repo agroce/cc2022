@@ -1,4 +1,4 @@
-\section{Implementation and Example Operations}
+\section{Implementation}
 \label{implementation}
 
 The heart of the implementation is to implement a set of mutation-testing operators
@@ -11,7 +11,7 @@ operators that will be most useful in fuzzing, and there is some
 suggestion that such approaches do not outperform random selection in any case~\cite{MutReduct}.  We therefore 
 used a large number of operators that apply to a wide variety of
 programming languages, based on the set of operators provided by the
-Universal Mutator tool, ignoring any highly-language-specific operators.
+Universal Mutator tool.
 
 \subsection{Fast or Smart?}
 
@@ -21,7 +21,7 @@ fundamental decision.  A mutation testing tool can be highly intelligent, only
 applying operators in ways that should produce compiling code, based
 on a parse of the program to be mutated.  Or, like the Universal
 Mutator, it can be ``dumb'' and apply rules without expensive analysis
-of the code, trusting a compiler to prune resulting invalid
+of the code, trusting a compiler to prune invalid
 mutants.  Which approach is best for fuzzing is not obvious: on the
 one hand, all fuzzing (including generative) relies on executing very
 large numbers of inputs; most ``random'' inputs will be uninteresting,
@@ -40,11 +40,12 @@ Of course, at first
 glance, it would appear that  ``smart'' strategies are not even
 possible for us: there will often not be a parser that the
 tool could use.  However, as we discuss below, recent work on
-multi-language syntax transformation enables an approach that can use
+multi-language syntax transformation~\cite{combypaper} enables an approach that can use
 \emph{syntax fragments} to provide a significant degree of intelligent
 mutation without specialized parsers for a compiler's input language,
 at the cost of additonal time required to synthesize inputs.
 
+\begin{sloppypar}
 \subsubsection{Fast String-level Approximation of Mutation Operators}
 \label{strat-fast-string-level}
 
@@ -57,10 +58,6 @@ case (?{\color{blu}0}?): (?{\color{dkgreen}/* Semantic statement deletion */}?)
 case (?{\color{blu}1}?):
   strncpy(original, (?{\color{dkred}\verb|"("|}?), MAX_MUTANT_CHANGE);
   strncpy(replacement, (?{\color{dkred}\verb|"(!"|}?), MAX_MUTANT_CHANGE);
-  break;
-case (?{\color{blu}2}?):
-  strncpy(original, (?{\color{dkred}\verb|"=="|}?), MAX_MUTANT_CHANGE);
-  strncpy(replacement, (?{\color{dkred}\verb|"!="|}?), MAX_MUTANT_CHANGE);
   break;
 (?{\color{blu}\textbf{\texttt{...}}?)
 case (?{\color{blu}53}?): (?{\color{dkgreen}/* Swap comma delimited things case 4 */}?)
@@ -76,7 +73,7 @@ case (?{\color{blu}55}?): (?{\color{dkgreen}/* Delete something like "const" cas
                 &replacement, pos, (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|""|}?));
   break;    
 \end{lstlisting}
-\caption{Part of the Fast String-Based Approximation of Mutation Operators}
+\caption{Part of the Fast String-Based Approximation}
 \label{fig:foperators}
 \end{figure}
 
@@ -100,6 +97,8 @@ before scanning a large fragment of the input.  When an operation that
 is chosen cannot be applied (e.g., the string to be replaced is not
 present), another operation is attempted, up to a maximum number of
 tries.
+
+\end{sloppypar}
 
 This approach is, as stated, fast.  While slower than many built-in
 AFL mutations (obviously searching for strings is slower than flipping
@@ -188,13 +187,14 @@ function or \texttt{for}-loop bodies). In general, manipulating a program's
 parse tree like this imposes exactly the kind of burden and complexity that
 small compiler projects can't support (defining a precise grammar, keeping
 tooling up to date as the grammar evolves). Even with multi-year investment in
-tools (like Csmith), effort necessarily goes into deeper focus on
+tools, effort necessarily goes into deeper focus on
 language-specific properties and semantics %, rather than broad, language-general approaches.
 that may not generalize to other compilers.
 \end{sloppypar}
 
+\begin{sloppypar}
 Our approach combats this cost by using the
-\texttt{Comby}\footnote{\href{https://comby.dev}{https://comby.dev}} tool to do
+\texttt{Comby}\footnote{\href{https://comby.dev}{https://comby.dev}} tool~\cite{combypaper} to do
 syntax-aware code matching and transformation. \texttt{Comby} works by coarsely
 parsing a program, taking care to correctly interpret nested syntax of code
 (parentheses and braces), and avoids conflating this syntax with strings and
@@ -205,6 +205,7 @@ strings or comments) to accurately parse code blocks. \texttt{Comby} supports
 over 50 languages, and uses a generic parser for unsupported languages like custom
 DSLs. \texttt{Comby} is likely to perform ``well-enough'' for any language
 anyone is likely to want to input to a compiler.
+\end{sloppypar}
 
 \texttt{Comby} does not have C bindings, so we expose its transformation
 abilities as a server to our AFL fuzzer. We implemented a minimal HTTP client
@@ -310,7 +311,7 @@ appealing than the string-level mutation. Our
 results in Section~\ref{eval} do show, however, that generative
 syntax-aware input manipulation demonstrates compelling utility despite
 incurring significant slowdown.\footnote{We are actively improving the tooling
-architecture, which is generally a matter of engineering rather than
+architecture, a matter of engineering rather than
 limitations on the inherent merits of the approach.}
 
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}

@@ -31,7 +31,8 @@ Grammar-based
 ``No-fuss'' mutation-based 
 & Off-the-shelf fuzzer \newline (e.g., AFL) 
 & Corpus of examples 
-& Inefficient, has trouble hitting ``deep'' bugs; may focus on ``bad'' code that should not compile but causes crashes 
+& Inefficient, has trouble hitting ``deep'' bugs; may focus on
+                        least interesting bugs
   \\
 \bottomrule
 \end{tabular}
@@ -109,7 +110,7 @@ suffers from two major drawbacks:
   almost impossible to find bugs requiring a sequence of subtle
   modifications.
   \item Second, when such fuzzers do find bugs, the bugs are often
-    found in particularly un-humanlike inputs, often invalid programs.
+    found in particularly un-humanlike inputs.
   \end{enumerate}
 
   Combined together, these problems make most compiler fuzzing

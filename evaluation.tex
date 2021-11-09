@@ -9,26 +9,27 @@ extent these low-effort strategies demonstrate significant benefit in the
 domain of compiler fuzzing, and how they influence fuzzer behavior and
 performance.
 
-Section~\ref{exp-setup} describes our experimental setup.
-Section~\ref{exp-results} summarizes our results, which compares our strategies
-against stock \texttt{AFL} and \texttt{AFL++} fuzzers on four actively-developed compilers. 
+%Section~\ref{exp-setup} describes our experimental setup.
+%Section~\ref{exp-results} summarizes our results, which compares our strategies
+%against stock \texttt{AFL} and \texttt{AFL++} fuzzers on four actively-developed compilers. 
 
 \subsection{Experimental Setup}
 \label{exp-setup}
 
 We evaluate our approach on four compilers, for the languages
 Solidity,
-Move, and Fe\footnote{See
+Move, Fe
+and
+Zig\footnote{See
         \href{https://docs.soliditylang.org}{soliditylang.org},
-        \href{https://move-book.com}{move-book.com}, and
-        \href{https://fe-lang.org}{fe-lang.org} respectively.}
-(smart contract languages) and the trending general-purpose language
-Zig.\footnote{https://ziglang.org}
+        \href{https://move-book.com}{move-book.com},
+        \href{https://fe-lang.org}{fe-lang.org} and
+        \href{https://ziglang.org}{ziglang.org}, respectively.}.
 Solidity is a high-profile language for writing smart contracts on the Ethereum
-(the first blockhain to support smart contracts) and widely used. Fe
+blockchain, and very widely used. Fe
 is an experimental statically-typed language for Ethereum smart
 contracts. Move is Facebook's smart contract language, developed for the
-industrial blockchain solution Diem.\footnote{\href{https://www.diem.com/en-us/}{diem.com}} Zig
+industrial blockchain solution Diem\footnote{\href{https://www.diem.com/en-us/}{diem.com}}. Zig
 is an up-and-coming systems language operating in the same space as C, Rust,
 Nim, and other statically-typed languages with manual memory management.
 Move and Fe are implemented in Rust, Solidity is implemented in C++, and Zig is
