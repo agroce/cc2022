@@ -2,13 +2,9 @@
 
 Compilers are notoriously hard to test, and modern optimizing
 compilers tend to contain many subtle bugs.  Compiler bugs can have
-serious consequences, including potentially the introduction of
-security vulnerabilities that cannot be detected by human or static
-analysis without knowledge of the compiler flaw~\cite{CompBug}.   The
-literature on compiler testing is extensive~\cite{chen2020survey} and
-goes back to such foundational papers as McKeeman's introduction of
-the idea of differential testing in the context of random testing of
-compilers~\cite{Differential}.
+serious consequences, including, potentially, the introduction of
+security vulnerabilities that cannot be detected without knowledge of a compiler flaw~\cite{CompBug}.   The
+literature on compiler testing is extensive~\cite{chen2020survey}.
 
 \small
 \begin{table*}
@@ -44,39 +40,35 @@ Grammar-based
 \end{table*}
 \normalsize
 
-As McKeeman's work suggests, one core approach to testing compilers is
+As McKeeman's~\cite{Differential} widely cited paper suggests, one core approach to testing compilers is
 based on
-the generation of \emph{random programs}.  In recent
-years, the Csmith~\cite{csmith} project is perhaps the most prominent
-example of this method.  However, builiding a tool such as Csmith
+the generation of \emph{random programs}.  The Csmith~\cite{csmith} project is perhaps the most prominent
+example of this method.  Builiding a tool such as Csmith
 is a heroic effort, requiring considerable expertise and
 development time.  Csmith itself is over 30KLOC, much of it complex
 and with a lengthy development history.  Csmith is focused on a
 single, albeit extremely important, language: C.  Building a tool like
 Csmith for a new programming language is not within the scope of most
-language or compiler development projects, even major ones.  Even for such a highly
-visible language/compiler project as Rust/rustc, to our knowledge
+compiler projects, even major ones.  For instance, to our knowledge
 there is \emph{no} useful tool for generating random Rust programs
-(and certainly none seems to be
+(certainly none seems to be
 prominently featured in {\tt rustc} testing).  As far as we can tell, Rust
 is primarily (or perhaps \emph{only}) fuzzed at the whole language
 level
 (\url{https://github.com/dwrensha/fuzz-rustc/blob/master/fuzz_target.rs}) by
 using a wrapper around libFuzzer, a tool with no special knowledge of Rust
 syntax or semantics, to randomly modify \emph{a set of supplied Rust
-programs}.  Similarly, the {\tt solc} compiler, which essentially
-defines the Solidity language used to write most smart contracts for
+programs}.  Similarly, the {\tt solc} compiler, used for most smart contracts on
 the Ethereum blockchain, is not fuzzed using a Csmith-like
-generator, but using methods similar to those used for
-Rust, again based on taking
-existing Solidity programs and randomly modifying them.  Creating a
+generator, but mostly using methods similar to those used for
+Rust.  Creating a
 grammar-based fuzzer has been an open issue for Solidity since August
 of 2020 (\url{https://github.com/ethereum/solidity/issues/9673}).
 
 \begin{sloppypar}
 Generating compiler tests by randomly mutating existing programs is widely used by
 real-world compiler projects in part because \emph{it is often very easy to
-  apply}: we call it ``no fuss'' compiler fuzzing.  Most compiler projects, even large ones, do not have a team
+  apply}: we call it ``no-fuss'' compiler fuzzing.  Most compiler projects, even large ones, do not have a team
 of spare random testing and compiler/language experts available, so the construction of
 Csmith-like tools is out of the question.  This means that the only
 way to generate valid programs \emph{from scratch} is to use a tool that takes as
@@ -87,14 +79,11 @@ extensive attention to tuning the probabilities of productions, etc., will be mo
 Csmith is successful in part because of the use of numerous heuristics
 to generate interesting code.  Second, the grammar of a language alone
 seldom provides guidance in avoiding simple errors that cause programs
-to be rejected without exploring interesting compiler behavior; a BNF
-grammar generally will not, for example, force identifiers to be
-defined before they are used.  Third, many interesting bugs can only
-be exposed by programs that may not satisfy a language's grammar, in
-theory, due to differences between a formal grammar and the actual
+to be rejected without exploring interesting compiler behavior; e.g., forcing identifiers to be
+defined before they are used.  Third, many interesting bugs can \emph{only}
+be exposed by programs that do not satisfy a language's supposed grammar, due to differences between a formal grammar and the actual
 parser used in a compiler, or other subtle implementation details.
-Salls et al.~\cite{Salls2021TokenLevel} elaborate this weakness in a
-recent paper, finding that many bugs could not be discovered using a
+Salls et al.~\cite{Salls2021TokenLevel} found that many bugs could not be discovered using a
 grammar-based generator.
 Finally, a usable grammar simply may not be available, especially as the
 tools will expect a grammar in a particular format (e.g. antlr4), and may add
@@ -102,16 +91,13 @@ restrictions on the structure of the grammar.  In the early stages,
 many programming language projects lack a stable, well-defined
 grammar in any formal, standalone, notation.  An ad-hoc ``grammar'' used by the compiler implementation may be the
 only grammar around.  Thus, while grammar-based compiler
-testing has sometimes been extremely successful (e.g., the
-LangFuzz~\cite{LangFuzz} approach), few compilers are actually
-extensively tested using purely grammar-based tools.
+testing has sometimes been extremely successful~\cite{LangFuzz}, few compilers are actually
+extensively tested using grammar-based tools.
 \end{sloppypar}
 
-For these reasons, many projects rely on the approach we call ``no-fuss''
-fuzzing, which uses off-the-shelf \emph{fuzzing} tools,
-originally designed to find security vulnerabilities in programs, to
-modify existing inputs (e.g. regression test programs) rather than generate programs from
-scratch.  These fuzzing tools essentially treat inputs as an
+Unfortunately, ``no-fuss''
+fuzzing must make use of off-the-shelf \emph{fuzzing} tools,
+originally designed to find security vulnerabilities in programs, thatessentially treat inputs as an
 undifferentiated byte-sequence, with little or no structure.  No-fuzz
 fuzzing has found many subtle compiler bugs, but
 suffers from two major drawbacks:
@@ -134,14 +120,11 @@ suffers from two major drawbacks:
   compiler fuzzing techniques and their weaknesses.
 
   Given that ``no-fuss'' fuzzing is widely used in large projects and
-  is basically the \emph{only} option available in
-  practice to small compiler projects that cannot devote resources to
-  tuning a grammar-based fuzzer (or perhaps even supporting an
-  always-up-to-date grammar), improving the effectiveness of such
-  compiler fuzzing is an obvious way to practically improve compiler
+  may be the \emph{only} option available in
+  practice to small compiler projects, improving the effectiveness of no-fuss fuzzing is an obvious way to practically improve compiler
   testing.  Ideally, such improvements would not require \emph{any}
   additional effort or change the workflow of existing compiler
-  fuzzing setups (other than changing the  tool to be used).
+  fuzzing setups.
 
   This paper proposes one such improvement, based on changing the way
   in which general-purpose fuzzers modify (mutate) inputs.  We augment
@@ -149,19 +132,17 @@ suffers from two major drawbacks:
   modifications drawn from the domain of \emph{mutation testing},
   which only modifies code in ways likely to preserve desirable
   properties --- such as the ability to get through a parser.  We evaluate
-  our technique on several real-world compilers, and show that it
+  our technique on four real-world compilers, and show that it
   significantly improves the mean number of distinct compiler bugs
-  detected, and moreover produces a much larger set of distinct,
-  successfully compiling, inputs that explore compiler behavior.  As a
+  detected.  As a
   result of our approach, which is available as an easy-to-use tool
   based on the widely used AFL fuzzer
   (\url{https://github.com/google/AFL}), we have reported more than
   100 previously undiscovered 
-  bugs in important real-world compilers (the great majority of
-  which have been confirmed and fixe) and received a bug bounty for
+  bugs, subsequently fixed, bugs in important real-world compilers, and received a bug bounty for
   our efforts.  In the longest-running campaign, that targeting the
   {\tt solc} compiler for Solidity code, we were the first to
-  report a very large number of serious bugs, despite continuous, extensive
-  fuzzing using un-modified AFL performed by the compiler developers
+  report a large number of serious bugs, despite extensive
+  fuzzing using AFL performed by the compiler developers
   and external contributors, over the same time frame, including
-  oss-fuzz continuous fuzzing.
+  OSS-fuzz continuous fuzzing.
