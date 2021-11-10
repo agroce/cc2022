@@ -96,6 +96,7 @@ quickly surfacing bugs with our ``no-fuss'' enhancements on these compilers.
 Each project was fuzzed at an early commit before we had reported bugs to the
 upstream repository.
 
+\begin{sloppypar}
 \noindent 
 \textbf{Input corpora and preprocessing} All fuzzer trials ran over inputs derived from the
 project's own source tree. A summary is shown in Table~\ref{tab:inputs}. For
@@ -107,6 +108,7 @@ Because this process can yield very large (and therefore slow) inputs during
 generation, we remove all templates and fragments larger than 4KB.  For
 Solidity, the base corpus decomposes into 9,308 templates and 7,651 concrete
 program fragments.  The remaining project corpora are as follows:
+\end{sloppypar}
 
 \begin{table}[h!]
 \centering
@@ -280,29 +282,34 @@ slow (almost 8$\times$ slower) to compensate for its ``smart''
 benefit.
 \end{sloppypar}
 
-\textbf{A look at quick and exclusive findings.} Perhaps the most compelling
-case for choosing ``fast or smart'' mutation enhancements is the ability to
-discover bugs that are exclusive to a particular strategy (requiring a rather
-unique alteration of inputs to find), or to identify unique,
-not-so-shallow bugs \emph{quickly}. In the former case, for instance, our results
-showed that the slightly better bug discovery of \texttt{splice-mutation} in Fe
-could be attributed to a \emph{consistent} discovery of a Rust borrow error
-(triggered in all 16 trials) that was never discovered by any other
-tool.\footnote{Commit
+\textbf{A look at quick and exclusive findings.} With exception to Fe, the
+improvement of our best approach for each project is statistically significant
+(by Wilcoxon rank-sum test, $p < 0.05$).  But rather than a statistical
+measure, which treats every unique bug as equal, perhaps the most compelling
+case for choosing ``fast or smart'' mutation enhancements lies in the
+qualitative properties of our approaches. Specifically, we found that our
+approaches tend to discover bugs that are exclusive to a particular strategy
+(requiring a rather unique alteration of inputs to find), or to identify
+unique, not-so-shallow bugs \emph{quickly}. In the former case, for instance,
+looking into qualitative results of Fe revealed that the slightly better bug
+discovery of \texttt{splice-mutation} could be attributed to a
+\emph{consistent} discovery of a Rust borrow error (triggered in all 16 trials)
+that was never discovered by any other tool.\footnote{Commit
 \href{https://github.com/ethereum/fe/commit/3b977b3078eb163ba521f57d8509e16efdb9dbf4}
 3b977b in \texttt{github.com/ethereum/fe.}} In the latter case, we see that the
 hybrid approach on Solidity consistently discovers a particular contract
 bug\footnote{Report ommitted for anonymity} while it is never discovered by the
-\texttt{text-mutation} strategy. Yet notably, during the process of running long
-term campaigns (Section~\ref{real-world}), this same bug \emph{was} eventually discovered by the pure
-\texttt{text-mutation} approach after some period longer than 24 hours.
-% TODO rijnard: statistical significance plug here. => look at qualitative properties
-% Our Zig results proves especially interesting because of unique ness.
-In these cases, evidence points to hybrid approaches leading to rapid and
-exclusive discoveries of certain bugs arising from the combination of simple
-and complex mutations on the input space.
+\texttt{text-mutation} strategy. Yet notably, during the process of running
+long term campaigns (Section~\ref{real-world}), this same bug \emph{was}
+eventually discovered by the pure \texttt{text-mutation} approach after some
+period longer than 24 hours. As another strong qualitative measure, our
+\texttt{splice-mutation} approach \emph{exclusively} found a majority of 14
+unique bugs out of a total 25 unique bugs across all approaches and trials.  In
+these cases, evidence points to hybrid approaches leading to rapid and
+exclusive discoveries of unique bugs arising from the combination of simple and
+complex mutations on the input space.
 
-While finding only 1 additional bug or 1.5 additional bugs in some cases may,
+Additionally, while finding only 1 additional bug or 1.5 additional bugs in some cases may,
 at first, seem like a modest gain, it is important to recall that in fuzzing,
 finding additional bugs is \emph{extremely hard}.  B\"{o}hme and
 Falk~\cite{fuzzexp} show that ``[W]ith twice the machines, we can find
