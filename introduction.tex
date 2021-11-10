@@ -41,9 +41,10 @@ Grammar-based
 \end{table*}
 \normalsize
 
+
 As McKeeman's~\cite{Differential} widely cited paper suggests, one core approach to testing compilers is
 based on
-the generation of \emph{random programs}.  The Csmith~\cite{csmith} project is perhaps the most prominent
+the generation of \emph{random programs}.  Csmith~\cite{csmith} is perhaps the most prominent
 example of this method.  Builiding a tool such as Csmith
 is a heroic effort, requiring considerable expertise and
 development time.  Csmith itself is over 30KLOC, much of it complex
@@ -52,28 +53,26 @@ single, albeit extremely important, language: C.  Building a tool like
 Csmith for a new programming language is not within the scope of most
 compiler projects, even major ones.  For instance, to our knowledge
 there is \emph{no} useful tool for generating random Rust programs
-(certainly none seems to be
-prominently featured in {\tt rustc} testing).  As far as we can tell, Rust
+(none seems to be
+prominently featured in {\tt rustc} testing).  Rust
 is primarily (or perhaps \emph{only}) fuzzed at the whole language
 level
 (\url{https://github.com/dwrensha/fuzz-rustc/blob/master/fuzz_target.rs}) by
-using a wrapper around libFuzzer, a tool with no special knowledge of Rust
-syntax or semantics, to randomly modify \emph{a set of supplied Rust
+using a wrapper around libFuzzer, a tool with no knowledge of Rust, to randomly modify \emph{a set of supplied Rust
 programs}.  Similarly, the {\tt solc} compiler, used for most smart contracts on
-the Ethereum blockchain, is not fuzzed using a Csmith-like
-generator, but mostly using methods similar to those used for
-Rust.  Creating a
+the Ethereum blockchain, is fuzzed using methods similar to those used for
+Rust\footnote{Creating a
 grammar-based fuzzer has been an open issue for Solidity since August
-of 2020 (\url{https://github.com/ethereum/solidity/issues/9673}).
+of 2020 (\url{https://github.com/ethereum/solidity/issues/9673}).}; we
+call these approaches, based on mutating a starting set of
+programs, \emph{no-fuss} fuzzing.  
 
 \begin{sloppypar}
-Generating compiler tests by randomly mutating existing programs is widely used by
-real-world compiler projects in part because \emph{it is often very easy to
-  apply}: we call it ``no-fuss'' compiler fuzzing.  Most compiler projects, even large ones, do not have a team
+ Most compiler projects, even large ones, do not have a team
 of spare random testing and compiler/language experts available, so the construction of
 Csmith-like tools is out of the question.  This means that the only
 way to generate valid programs \emph{from scratch} is to use a tool that takes as
-input the \emph{grammar} of a language and generates random outputs
+input a \emph{grammar}, and generates random outputs
 satisfying the grammar.   However, such an approach has multiple problems.
 First, in many cases the programs produced by a grammar, without
 extensive attention to tuning the probabilities of productions, etc., will be mostly uninteresting.
@@ -93,7 +92,7 @@ many programming language projects lack a stable, well-defined
 grammar in any formal, standalone, notation.  An ad-hoc ``grammar'' used by the compiler implementation may be the
 only grammar around.  Thus, while grammar-based compiler
 testing has sometimes been extremely successful~\cite{LangFuzz}, few compilers are actually
-extensively tested using grammar-based tools.
+extensively tested that way.
 \end{sloppypar}
 
 Unfortunately, ``no-fuss''
@@ -124,8 +123,7 @@ suffers from two major drawbacks:
   may be the \emph{only} option available in
   practice to small compiler projects, improving the effectiveness of no-fuss fuzzing is an obvious way to practically improve compiler
   testing.  Ideally, such improvements would not require \emph{any}
-  additional effort or change the workflow of existing compiler
-  fuzzing setups.
+  additional effort on the part of developers.
 
   This paper proposes one such improvement, based on changing the way
   in which general-purpose fuzzers modify (mutate) inputs.  We augment
@@ -135,15 +133,14 @@ suffers from two major drawbacks:
   properties --- such as the ability to get through a parser.  We evaluate
   our technique on four real-world compilers, and show that it
   significantly improves the mean number of distinct compiler bugs
-  detected.  As a
-  result of our approach, which is available as an easy-to-use tool
+  detected.  Our approach is available as an easy-to-use tool
   based on the widely used AFL fuzzer
-  (\url{https://github.com/google/AFL}), we have reported more than
+  (\url{https://github.com/google/AFL}). We have reported more than
   100 previously undiscovered 
-  bugs, subsequently fixed, bugs in important real-world compilers, and received a bug bounty for
+  bugs, subsequently fixed, and received a bug bounty for
   our efforts.  In the longest-running campaign, that targeting the
   {\tt solc} compiler for Solidity code, we were the first to
   report a large number of serious bugs, despite extensive
-  fuzzing using AFL performed by the compiler developers
-  and external contributors, over the same time frame, including
-  OSS-fuzz continuous fuzzing.
+  (essentially continuous)
+  fuzzing using AFL performed by the developers, OSS-Fuzz,
+  and external contributors, over the same time frame.
