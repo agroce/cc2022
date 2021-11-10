@@ -16,6 +16,7 @@ performance.
 \subsection{Experimental Setup}
 \label{exp-setup}
 
+\begin{sloppypar}
 We evaluate our approach on four compilers, for the languages
 Solidity,
 Move, Fe
@@ -33,7 +34,8 @@ industrial blockchain solution Diem\footnote{\href{https://www.diem.com/en-us/}{
 is an up-and-coming systems language operating in the same space as C, Rust,
 Nim, and other statically-typed languages with manual memory management.
 Move and Fe are implemented in Rust, Solidity is implemented in C++, and Zig is
-implemented in a mix of C++ and Zig itself. 
+implemented in a mix of C++ and Zig itself.
+\end{sloppypar}
 
 \noindent \textbf{Fuzzer configurations.} We perform a comparative evaluation
 of four fuzzing configurations.  The first configuration is stock \texttt{AFL}
