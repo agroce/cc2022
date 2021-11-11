@@ -43,7 +43,7 @@ tool could use.  However, as we discuss below, recent work on
 multi-language syntax transformation~\cite{combypaper} enables an approach that can use
 \emph{syntax fragments} to provide a significant degree of intelligent
 mutation without specialized parsers for a compiler's input language,
-at the cost of additonal time required to synthesize inputs.
+at the cost of additional time required to synthesize inputs.
 
 \begin{sloppypar}
 \subsubsection{Fast String-level Approximation of Mutation Operators}
@@ -178,10 +178,10 @@ AFL's fuzzing hot loop. Our early success with this method prompted us to
 augment AFL further with even smarter mutations to find more bugs more quickly.
 The intuition behind these smarter mutations is to manipulate (typically
 larger) code fragments that are likely to be syntactically valid and yet
-trigger deeper buggy properties (past compiler parsing). Unlike transformtions
+trigger deeper buggy properties (past compiler parsing). Unlike transformations
 in the core approach that approximate syntactically valid transformations on
 strings or lines, syntax-aware transformations seek to accurately modify syntax
-in well-parenthesized expressions or entire multiline code blocks (e.g.,
+in well-parenthesized expressions or entire multi-line code blocks (e.g.,
 function or \texttt{for}-loop bodies). In general, manipulating a program's
 parse tree like this imposes exactly the kind of burden and complexity that
 small compiler projects can't support (defining a precise grammar, keeping
@@ -211,7 +211,7 @@ abilities as a server to our AFL fuzzer. We implemented a minimal HTTP client
 in the fuzzer's hot loop to request inputs. We use the \texttt{Comby} server in
 a mutation mode where it \emph{generates} inputs from a decomposition of
 \emph{templates} and \emph{concrete fragments} obtained from the initial corpus
-of programs. We first preprocess all programs in the initial corpus to obtain
+of programs. We first pre-process all programs in the initial corpus to obtain
 this decomposition. The following figure illustrates the decomposition of an
 example Zig program.
 
@@ -291,7 +291,7 @@ that our approach can be customized to extract \emph{any} kind of syntactically
 significant pattern and correspondingly decompose the input program; we simply
 chose syntax that commonly delineates code blocks and expressions (i.e.,
 parentheses and braces) since these exhibit interesting properties that
-preserve structure (multiline statements, well-formed expressions) that go
+preserve structure (multi-line statements, well-formed expressions) that go
 beyond what string-level mutations identify.
 
 We perform this decomposition for all programs in the corpus to obtain
