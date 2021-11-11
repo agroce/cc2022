@@ -61,8 +61,7 @@ in \texttt{AFL++}.}
 The third and fourth configurations we compare are both strategies based on our
 new approaches in Section~\ref{implementation}. The third configuration applies
 purely string-level mutations as described in
-Section~\ref{strat-fast-string-level} with \textbf{75\%} probability of
-attempting to mutate the input. The fourth configuration augments the pure
+Section~\ref{strat-fast-string-level} with \textbf{75\%} probability. The fourth configuration augments the pure
 string-level mutation strategy with syntax-aware mutation
 (Section~\ref{strat-syntax-aware}), where our \texttt{AFL} has \textbf{33\%}
 probability to request that the server generate a new input (using template
@@ -82,7 +81,7 @@ corpora).
 configuration for each compiler to control for variability and randomness.  We
 ran four configurations for the Solidity, Move, and Fe compilers (where
 \texttt{AFL++} is included), and three configurations for Zig (\texttt{AFL++}
-excluded) for a total of 98 trials.  A single trial comprises 24 hours of
+excluded) for a total of 210 trials.  A single trial comprises 24 hours of
 fuzzing on a single core, starting from the initial input corpus.  
 % 14*3*24+14*4*24 = 2,352
 We chose 24 hour trials because our intent is to
@@ -93,7 +92,7 @@ cheaper (more likely) than long-running campaigns~\cite{fuzzexp}. I.e., if our
 strategies exhibit any significant competitive advantage, we expect it
 to manifest
 early in a controlled setting (within 24 hours).  In aggregate, our
-experiments represent 98 days of fuzzing to demonstrate fuzzer performance for
+experiments represent 210 days of fuzzing to demonstrate fuzzer performance for
 quickly surfacing bugs with our ``no-fuss'' enhancements on these compilers.
 Each project was fuzzed at an early commit before we had reported bugs to the
 upstream repository.
@@ -143,16 +142,17 @@ real fuzzing campaign that typically lasts much longer than 24 hours.  Even in
 our experimental setup, this cost, which would account for for less than 5\% of
 the fuzzing time on average for a single trial, is amortized over multiple 24
 hour trials, and thus difficult to adjust for fairly. A benefit of this upfront
-per-project process means that our fuzzer trials using the 33\% syntax-aware
+per-project process is that our fuzzer trials using the 33\% syntax-aware
 mutation strategy start fuzzing with an empty, ``zero'' program and rely
 entirely on the probability to potentially generate new combinations inputs
 from the \textbf{Templ.} and \textbf{Frag.} at runtime. This is architecturally
 distinct from our other \texttt{AFL} fuzzing configurations (both the baseline
-and pure string-level mutations) that run its own preprocessing bundled with
+and pure string-level mutations) that run preprocessing bundled with
 AFL, filtering initial inputs (\textbf{Files}) based on code coverage (which may
-take seconds to minutes depending on corpus size).
+take seconds to minutes, or even longer, depending on corpus size)
+before fuzzing begins.
 In brief, preprocessing times in our configurations are not directly
-comparable, but it is reasonable to assume that the cost for all
+comparable, but it is reasonable to assume that the costs for all
 configurations converge to zero in realistic, long-running campaigns.
 
 \noindent \textbf{Hardware.} Each trial ran on Ubuntu 18.04, on a single core
@@ -234,10 +234,10 @@ determined by classifying crashing inputs by bug-fixing commits, except for at
 most 2 unique, yet unfixed Solidity bugs manually inspected by an expert
 author. We assume a single commit fixes a single bug, an assumption that is
 consistent with prior work~\cite{semantic-crash-bucketing,Taming}, general
-software development practice, and our manual inspection). I.e., \textbf{Unique
+software development practice, and our manual inspection. I.e., \textbf{Unique
 bugs} is a precise ground truth of truly unique bugs. \textbf{Unique Bugs} for
 Zig are largely unfixed at the time of writing, and are instead comprehensively
-classified by an expert author manual inspecting every crashing input and its
+classified by an expert author manually inspecting every crashing input and its
 error message. Not reported in the table, a proportion of (potentially
 duplicative) crashing inputs for \texttt{Move} were found by all configurations
 that remain untriaged, because we could not find a bug-fixing commit, or
@@ -262,7 +262,7 @@ variability in input mutation. Another strong result is the discovery of more th
 as many unique bugs found via \texttt{splice-mutation} in Zig compared to other approaches.
 Somewhat similar to Solidity, \texttt{splice-mutation} on Zig overcomes
 a pathological behavior where usual \texttt{AFL} fuzzing finds
-extremely large inputs ``insteresting'', but that do not actually crash
+extremely large inputs ``interesting'', but they do not actually crash
 the compiler. This behavior affects all configurations (accounting for 0 unique bugs for some trials with \texttt{text-mutation} and \texttt{splice-mutation}) but is effectively suppressed on average by variation created with \texttt{splice-mutation}. We expand more on the qualitative appeal of our approaches below.
 On the whole, our weakest result reveals two related
 insights:

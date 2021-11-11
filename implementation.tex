@@ -71,7 +71,6 @@ case (?{\color{blu}54}?): (?{\color{dkgreen}/* Just delete a line */?)
 case (?{\color{blu}55}?): (?{\color{dkgreen}/* Delete something like "const" case 1 */}?)
   delim_replace(out_buf, temp_len, &original, 
                 &replacement, pos, (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|" "|}?), (?{\color{dkred}\verb|""|}?));
-  break;    
 \end{lstlisting}
 \caption{Part of the Fast String-Based Approximation}
 \label{fig:foperators}
@@ -110,7 +109,7 @@ approximation~\cite{Eclipser}, and is successful much, much, more
 often than solving constraints over compiler inputs, which are among
 the hardest conceivable for modern SMT solvers or linear
 approximations to handle.  Figure \ref{fig:fopexample} shows some
-sample transformations of inputs using this approach.  Notice that
+sample transformations of inputs using this approach.  Note that
 some of the mutations tend to delete code, potentially large amounts
 of code.  This is critical for enabling the fuzzer engine to compose
 interesting inputs, in that the larger two inputs are, the
@@ -317,9 +316,9 @@ limitations on the inherent merits of the approach.}
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}
 
 Our full implementation is based on Google's released code for the AFL
-fuzzer, and available as an open source tool (that, to date, has 68
+fuzzer (\url{https://github.com/google/AFL}), and available as an open source tool (that, to date, has 68
 stars on GitHub, has been forked 7 times, and has external users who
-make bug reports and queries to us).\footnote{Link omitted for
+contact us).\footnote{Link omitted for
   blinding.}  The main change to AFL is the addition of code such as that shown in
 Figure~\ref{fig:foperators}.  The new version (the ``AFL compiler
 fuzzer'') can also call out to {\tt comby} to generate mutants.  Two

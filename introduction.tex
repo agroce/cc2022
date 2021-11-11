@@ -97,9 +97,9 @@ extensively tested that way.
 
 Unfortunately, ``no-fuss''
 fuzzing must make use of off-the-shelf \emph{fuzzing} tools,
-originally designed to find security vulnerabilities in programs, thatessentially treat inputs as an
-undifferentiated byte-sequence, with little or no structure.  No-fuzz
-fuzzing has found many subtle compiler bugs, but
+originally designed to find security vulnerabilities in inputs treated
+largely as byte-streams.  No-fuzz
+fuzzing therefore
 suffers from two major drawbacks:
 
 \begin{enumerate}
@@ -108,14 +108,13 @@ suffers from two major drawbacks:
   the parser.  This is inefficient, and makes it
   almost impossible to find bugs requiring a sequence of subtle
   modifications.
-  \item Second, when such fuzzers do find bugs, the bugs are often
-    found in particularly un-humanlike inputs.
+  \item Bugs are often
+    found via very un-humanlike inputs.
   \end{enumerate}
 
-  Combined together, these problems make most compiler fuzzing
-  performed in practice, even on major projects, both inefficient in
-  terms of finding bugs and perhaps prone to find bugs that are not
-  the most important and interesting compiler bugs.
+  Combined together, these problems tend to make most compiler fuzzing
+  performed in practice inefficient in
+  terms of finding bugs and prone to find less interesting bugs.
   Table~\ref{tab:techniques} summarizes the existing widely-used
   compiler fuzzing techniques and their weaknesses.
 
@@ -146,21 +145,19 @@ suffers from two major drawbacks:
   (?{\color{blu}function}?) () r(?{\color{dkred}=}?)true(?{\color{dkred}\verb|?|}?)fun_x(?{\color{dkred}\verb|:|}?)fun_y(?{\color{dkred};}?)
 }
 \end{lstlisting}
-\caption{An example of an early crash-inducing Solidity program found with our approach. The combination of expressions and function delcarations trigger complex behavior in an optimization routine that attempts to deduplicate low level code blocks during code generation.}
+\caption{An example of an early crash-inducing Solidity program found
+  with our approach (the bug was submitted and fixed). The combination of expressions and function delcarations trigger complex behavior in an optimization routine that attempts to deduplicate low level code blocks.}
 \label{lst:sol-exemplar}
 \end{figure}
 
   We evaluate
   our technique on four real-world compilers, and show that it
   significantly improves the mean number of distinct compiler bugs
-  detected.  Our approach is available as an easy-to-use tool
-  based on the widely used AFL fuzzer
-  (\url{https://github.com/google/AFL}). We have reported more than
+  detected.  We have reported more than
   100 previously undiscovered 
   bugs, subsequently fixed, and received a bug bounty for
   our efforts.  In the longest-running campaign, that targeting the
   {\tt solc} compiler for Solidity code, we were the first to
   report a large number of serious bugs, despite extensive
-  (essentially continuous)
-  fuzzing using AFL performed by the developers, OSS-Fuzz,
-  and external contributors, over the same time frame.
+  fuzzing  performed by the developers, OSS-Fuzz,
+  and external contributors.
