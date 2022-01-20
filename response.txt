@@ -18,7 +18,7 @@ Agreed.   We'll discuss our (non-exhaustive) trials a bit more; the numbers are 
 
 The key is that _given a well-formed corpus program_ mutation operators _tend to_ produce well formed mutated programs.  There is no guarantee, but there is likelihood due to the nature of operators.
 
-Q1:  We have not seriously fuzzed LLVM or GCC.  We did run a small experiment on TinyCC and found significantly more crash bugs than AFL.  However, as the paper notes, the approach is most relevant where something like Csmith is not available and undefined behavior (UB) is not importan.  Perhaps we should run on clang++, etc., but UB would still be a problem.
+Q1:  We have not seriously fuzzed LLVM or GCC.  We did run a small experiment on TinyCC and found significantly more crash bugs than AFL.  However, as the paper notes, the approach is most relevant where something like Csmith is not available and undefined behavior (UB) is not important.  Perhaps we should run on clang++, etc., but UB would still be a problem.
 
 Q2:  Not sure we understand this question?  We have used OSS-Fuzz in other contexts, and solc is on OSS-Fuzz, but as we understand it, OSS-Fuzz only supports their versions of AFL/libFuzzer, etc.
 
