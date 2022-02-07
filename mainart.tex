@@ -1,0 +1,304 @@
+%%
+%% This is file `sample-sigconf.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% samples.dtx  (with options: `sigconf')
+%%
+%% IMPORTANT NOTICE:
+%%
+%% For the copyright see the source file.
+%%
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from sample-sigconf.tex.
+%%
+%% For distribution of the original source see the terms
+%% for copying and modification in the file samples.dtx.
+%%
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[sigplan,review]{acmart}
+
+\usepackage{code}
+\usepackage{graphicx}
+\usepackage{balance}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{color, colortbl}
+\usepackage{wasysym}
+\usepackage{pifont}
+\usepackage{listings}
+\usepackage{subcaption}
+
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins,breakable,listings}
+
+
+%%% The following is specific to Onward! '21 and the paper
+%%% 'Let a Thousand Flowers Bloom: On the Uses of Diversity in Software Testing'
+%%% by Alex Groce.
+%%%
+\setcopyright{acmcopyright}
+\acmPrice{15.00}
+\acmDOI{10.1145/3486607.3486772}
+\acmYear{2022}
+\copyrightyear{2022}
+\acmSubmissionID{onward21essays-id2-p}
+\acmISBN{978-1-4503-9110-8/21/10}
+\acmConference[foo]{bar}
+\acmBooktitle{baz}
+
+
+\definecolor{LLGray}{gray}{0.87}
+
+%%%% NUMBERS %%%%
+
+%% SOLIDITY %%
+% Alex's reports
+\newcommand{\solASubmitted}{88}
+% all of the below are in terms of \solSubmitted
+\newcommand{\solAShouldCompile}{16}
+\newcommand{\solAValidFixed}{75}
+\newcommand{\solAValidDuplicates}{9}
+\newcommand{\solAUniqueFixed}{66} % \solAValidFixed - \solAValidDuplicates
+\newcommand{\solANotValid}{7} % or unreproducible
+\newcommand{\solAUnconfirmed}{4}
+\newcommand{\solACurrentConfirmedUnfixed}{2}
+\newcommand{\solACurrentInProgress}{1}
+
+%% Rijnard's reports
+\newcommand{\solRSubmitted}{2}
+\newcommand{\solRUniqueFixed}{2}
+
+\newcommand{\solTotalReported}{90} % \solASubmitted + \solRSubmitted
+\newcommand{\solUniqueFixed}{69} % \solAUniqueFixed (66) + \solRUniqueFixed (2) 
+\newcommand{\solUniqueConfirmed}{2} % \solACurrentConfirmedUnfixed (2). Still waiting on \solACurrentInProgress (1) , not sure what in-progress is, but presumably confirmed.
+\newcommand{\solUniqueFixedOrConfirmed}{71} % \solUniqueFixed (68) + \solUniqueConfirmed (3)
+
+%% MOVE %%
+\newcommand{\movUniqueFixed}{12}
+\newcommand{\movUniqueConfirmed}{2}
+\newcommand{\movUniqueFixedOrConfirmed}{14}
+
+%% FE %%
+\newcommand{\feSubmitted}{63}
+\newcommand{\feUniqueFixed}{43}
+\newcommand{\feUniqueConfirmed}{6}
+\newcommand{\feUniqueFixedOrConfirmed}{49}
+\newcommand{\feValidDuplicates}{6}
+
+%% Zig %%
+\newcommand{\zigUniqueConfirmed}{1}
+\newcommand{\zigUniqueFixed}{1}
+\newcommand{\zigUniqueFixedOrConfirmed}{2}
+
+%% ALL %%
+\newcommand{\allValidDuplicates}{15} % \feValidDuplicates (6) + \solAValidDuplicates (9)
+\newcommand{\allUniqueFixed}{125} % \solUniqueFixed (68) + \movUniqueFixed (12) + \zigUniqueFixed (1) + \feUniqueFixed (41)
+\newcommand{\allUniqueConfirmed}{11} % \solUniqueConfirmed (2) + \movUniqueConfirmed (2) + \zigConfirmed (1) + \feUniqueConfirmed (8)
+\newcommand{\allUniqueFixedOrConfirmed}{136} % \solUniqueFixedOrConfirmed (70) + \movUniqueFixedOrConfirmed (14) + \zigUniqueFixedOrConfirmed (2) + \feUniqueFixedOrConfirmed (49)
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\acirc}{\textbf{--}}
+
+\newcommand{\ph}[1]{\phantom{#1}}
+
+
+\newcommand\vtextvisiblespace[1][.5em]{%
+  \makebox[#1]{%
+    \kern.07em
+    \vrule height.3ex
+    \hrulefill
+    \vrule height.3ex
+    \kern.07em
+  }% <-- don't forget this one!
+}
+
+
+\tcbset{
+%    center title,
+    boxrule=0pt,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt,
+%    colback=gray!70,
+%    colframe=white,
+%    width=.5\columnwidth,
+%    boxsep=1pt,
+%    arc=0pt,outer arc=0pt,
+    }
+
+\definecolor{dkgreen}{rgb}{0,0.5,0}
+\definecolor{dkred}{rgb}{0.5,0,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{vlgray}{gray}{0.95}
+\definecolor{lgray}{gray}{0.7}
+\definecolor{bluehighlight}{HTML}{46adb7}
+\definecolor{orangehighlight}{HTML}{e3a24d}
+\definecolor{redhighlight}{HTML}{ffeef0}
+\definecolor{greenhighlight}{HTML}{e6ffed}
+\definecolor{grayhighlight}{HTML}{6a737d}
+\definecolor{blu}{HTML}{035cc5}
+
+\lstdefinestyle{gostyle}{
+  basicstyle=\ttfamily\bfseries\scriptsize\linespread{1.1},
+  frameround=tttt,
+  frame=single,
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkred},
+  stringstyle=\color{dkgreen},
+% https://tex.stackexchange.com/questions/329533/listings-package-lstinline-command-has-strange-spacing-behaviour-after-double-qu
+  keepspaces=true,              % very important to preserve space after ' in footnote
+  numbers=left,
+  breaklines=true,
+  otherkeywords={::=},
+  numberstyle=\ttfamily\footnotesize\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+%  backgroundcolor=\color{vlgray},
+  backgroundcolor=\color{white},
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false,
+  xleftmargin=.18in,
+  captionpos=b,
+  escapeinside={(?}{?)},
+%  showstringspaces=true
+%  escapeinside={$}{$}
+}
+
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+\lstset{style=gostyle}
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{Making No-Fuss Compiler Fuzzing Effective}
+
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+%% Of note is the shared affiliation of the first two authors, and the
+%% "authornote" and "authornotemark" commands
+%% used to denote shared contribution to the research.
+
+
+
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+\renewcommand{\shortauthors}{us folks}
+
+%% Table shortcuts
+\newcommand{\mr}[2]{\multirow{#1}{*}{#2}}
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+%% comments
+\newcommand{\clg}[1]{\textcolor{blue}{#1}}
+\newcommand{\rvt}[1]{\textcolor{purple}{#1}}
+\newcommand{\kj}[1]{\textcolor{olive}{#1}}
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10010940.10010992.10010998.10011001</concept_id>
+<concept_desc>Software and its engineering~Dynamic analysis</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Dynamic analysis}
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+
+\keywords{fuzzing, compiler development, mutation testing}
+
+
+\maketitle
+
+
+\input{introduction}
+\input{technique}
+\input{implementation}
+\input{evaluation}
+\input{realworld}
+\input{related}
+\input{conclusions}
+
+
+
+
+\balance
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bibliography}
+
+\newpage
+
+\appendix
+
+\section{Appendix A: Artifact Submission}
+
+The full artifact information for this paper is available at
+\url{https://zenodo.org/record/5982794} (DOI 10.5281/zenodo.5982794).  The zenodo link provides
+
+\begin{enumerate}
+\item The actual tool build used in  our evaluation.
+\item Scripts and utilities for the experiments.
+  \item A Docker image with the artifact set up to run on a
+    representative compiler subject, {\tt solc}.
+  \item Raw results of our fuzzing runs.
+    \item More detailed documentation of the experimental methods and
+      build process for the above.
+    \end{enumerate}
+
+    Please see {\tt README.md} at the Zenodo link for further details.
+
+The latest version of the AFL compiler-fuzzer can always be found at \url{https://github.com/agroce/afl-compiler-fuzzer}.
+
+
+\end{document}
