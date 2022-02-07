@@ -1,55 +1,56 @@
 #5A:
 
-We focused on these languages because they all avoided undefined behavior and we knew would view any bugs as serious, so confirm/deny quickly (and unlike gcc/llvm are not overwhelmed with a bug backlog).  The programs in compiler tests (our source of a corpus) tend to be relatively small, since developers find such easier to debug/maintain.  For longer programs, mutation might not be as useful.
+We focused on these languages because they lacked undefined behavior problems and we knew would take bugs seriously (and unlike gcc/llvm are not overwhelmed with bug backlog).
+
+Compiler _tests_ (our corpus) tend to be small, since developers find such easier to use.  For longer programs, mutation might work much worse.
 
 > blindly swapping
 
-Yes, though non-compiling code can also reveal bugs.  The code is, except for type names, valid Solidity as well, just meant as "generic code."
+Yes, though non-compiling code can reveal bugs.
+
+The code is, except for type names, valid Solidity as well, just meant as "generic code."
 
 > invalid mutants
 
-Varies by program, seeds, and fuzzing stage (but fewer with Comby).  Note that an invalid mutant can reveal a compiler bug.
+Varies greatly by program, seeds, and fuzzing stage (but fewer with Comby).  Note that an invalid mutant can reveal a compiler bug.
 
 > ratios
 
 Agreed.   We'll discuss our (non-exhaustive) trials a bit more; the numbers are configurable, and it's possible our rough estimates are non-optimal for many compilers.
 
-> syntactically well-formed program without a known grammar
+> program without a known grammar
 
-The key is that _given a well-formed corpus program_ mutation operators _tend to_ produce well formed mutated programs.  There is no guarantee, but there is likelihood due to the nature of operators.
+The key is that given a well-formed program mutation operators _tend to_ produce well formed programs.  This is the nature of operators, which do not need a grammar.
 
-Q1:  We have not seriously fuzzed LLVM or GCC.  We did run a small experiment on TinyCC and found significantly more crash bugs than AFL.  However, as the paper notes, the approach is most relevant where something like Csmith is not available and undefined behavior (UB) is not important.  Perhaps we should run on clang++, etc., but UB would still be a problem.
+Q1:  We have not seriously fuzzed LLVM or GCC.  A small experiment on TinyCC found significantly more crashes than AFL.  As the paper notes, the approach is most relevant where something like Csmith is not available and undefined behavior (UB) is not important.  Perhaps we should run on clang++, but UB would still be a problem.
 
-Q2:  Not sure we understand this question?  We have used OSS-Fuzz in other contexts, and solc is on OSS-Fuzz, but as we understand it, OSS-Fuzz only supports their versions of AFL/libFuzzer, etc.
+Q2:  We have used OSS-Fuzz in other contexts, and solc is on OSS-Fuzz, but as we understand it, OSS-Fuzz only supports a fixed set of fuzzers.
 
-Q3:  For Solidity, the project where we have best data (it has been fuzzed substantially with AFL in public) the answer seems to be about 40-50 at most (mostly from OSS-Fuzz) compared to our 70+.
+Q3:  For Solidity, the project where we have best data, the answer seems to be about 40-50 (mostly from OSS-Fuzz) compared to our 70+.
 
 Q4:  We have not performed longer _controlled_ experiments.  Many of the bugs we reported are from longer runs, and informal similarly-long plain-AFL runs for comparison did not hit those bugs.
 
 #5B:
 
-We will discuss DeepSmith, etc..  Comparing against CSmith is out of scope for rebuttal, but would be interesting.  The fact that we would produce programs with undefined behavior in C very frequently, and CSmith would not, would make it harder to interpret any numbers.
+We will discuss DeepSmith, etc..  Comparing against CSmith is out of scope for rebuttal, but would be interesting!  The fact that we would produce programs with undefined behavior in C very frequently, and CSmith would not, would make it harder to interpret any numbers.  Csmith SHOULD do better also, being single-language focused.
 
-RIJNARD SAYS: also may be worth saying, if we can fit it, that while CSmith can a kind of syntax-aware transformation for languages besides C, but it doesn't grant a way to extract/mine/splice an existing corpus of programs/tests and use those to execute mutations (which is novel in our approach, and we believe effective, though we don't have a direct comparison). I get into this below.
+>  ... 'decompose' operation uses them?
 
-
->  When you say "A 'decompose' operation yields three templates," how is those templates created? Or do you mean that a bunch of templates are predefined and the 'decompose' operation uses them?
-
-Answer: Apologies, to elaborate on this part in the paper on l522-528: we hand-wrote the three simplistic, predefined patterns ($expr), {$expr}, [$expr]. Applying these patterns to an input program, they yield the decomposition of templates and fragments (fragments are the parts that are matched, templates come from the input sans fragments).
+To elaborate on this part in the paper (522-528): we hand-wrote the three simplistic, predefined patterns ($expr), {$expr}, [$expr]. Applying these patterns to an input program, they yield the decomposition of templates and fragments (fragments are the parts that are matched, templates come from the input sans fragments).
 
 We will address other presentation concerns raised in the review, thank you!
 
 #5C:
 
-As far as we know, nobody has seriously applied symex to these targets, and we are dubious of the scalability.
+As far as we know, nobody has seriously applied symbolic execution to these targets, and we are very dubious of the scalability.
 
-The Solidity bounty was for a bug that found a case where invalid assembly was eventually generated due to improper escaping of backslashes, which could lead to code that appeared to do one thing, but in fact did something else via clever construction.  The example found revealed a larger issue, and paranoid comparison of scanner results was considered as a response.  Both "our" mutation to shape a context program and AFL-mutation to produce a dangerous string were needed.
+The Solidity bounty was for a bug where invalid assembly was eventually generated due to improper escaping, which could lead to code that appeared to do one thing, but in fact did something else via clever construction.  The example found revealed a larger issue, and paranoid comparison of scanner results was considered as a response.  Both "our" mutation to shape a context program and AFL-mutation to produce a dangerous string were needed.
 
-Solidity is a complex optimizing compiler implemented in close to 300KLOC of complex C++ code.  Fe is an experimental, in-progress compiler with a simpler optimizer (and use of the Solc Yul backend for further optimization) implemented in about 22KLOC of Rust. Move compiler is ~26KLOC of Rust. Zig contains ~137KLOC of C++ code.
+Solidity is a complex optimizing compiler implemented in close to 300KLOC of complex C++ code.  Fe is an experimental, in-progress compiler with a simpler optimizer (and use of the Solc Yul backend for further optimization) implemented in about 22KLOC of Rust. Move is ~26KLOC of Rust. Zig contains ~137KLOC of C++ code.
 
-The Solidity bugs were sometimes in the parser/scanner, but mostly in various optimization/code-gen stages.  For Fe, about half of bugs were in parsing/scanning, and half in deeper optimization stages. For Move, predominantly issues with code translation and broken semantic invariants (type checking, and infinite loops); we found 1 parser bug. For Zig, bugs occur in IR analysis, code translation, and code generation.
+The Solidity bugs were sometimes in the parser/scanner, but mostly in various optimization/code-gen stage; in fact, the largest group were in the SMT Checker, a very late optional analysis stage.  For Fe, more than half were in deeper stages. For Move, predominantly issues with code translation and broken semantic invariants (type checking, and infinite loops); we found 1 parser bug. For Zig, bugs occur in IR analysis, code translation, and code generation.
 
-The decomposition approach is, to our knowledge, novel, and duly worth emphasizing (we will do so). While other approaches may be amenable to syntax-aware fuzzing approaches (CSmith), none have gone so far as to extend parsing capabilities to extract and then seed fuzzing with an initial corpus in general terms (i.e., operational on multiple languages).
+The decomposition approach is, to our knowledge, novel, and duly worth emphasizing (we will do so). While other approaches may be amenable to syntax-aware fuzzing approaches (e.g., CSmith), none have gone so far as to extend parsing capabilities to extract and then seed fuzzing with an initial corpus in general terms (i.e., operational on multiple languages).
 
-The Comby tool's performance is shown in comparisons, but the Python Universal Mutator was not used because the slowdown was well over 1000x (calling out to Python and using Python regexp processing etc.), to the point of being impractical.
+The Comby tool's performance is shown in comparisons, but the Python Universal Mutator was not used because the slowdown was well over 1000x.
 
