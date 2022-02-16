@@ -16,10 +16,10 @@ Universal Mutator tool.
 \subsection{Fast or Smart?}
 
 More important than the selection of the best mutation operators
-(which will likely vary considerably by target compiler) is a
-fundamental decision.  A mutation testing tool can be highly intelligent, only
+(which will likely vary considerably by target compiler) is another
+fundamental decision.  Namely, a mutation testing tool can be highly intelligent, only
 applying operators in ways that should produce compiling code, based
-on a parse of the program to be mutated.  Or, like the Universal
+on a parse of the program to be mutated; or, like the Universal
 Mutator, it can be ``dumb'' and apply rules without expensive analysis
 of the code, trusting a compiler to prune invalid
 mutants.  Which approach is best for fuzzing is not obvious: on the
@@ -143,8 +143,8 @@ merging them.
 \begin{subfigure}{.45\columnwidth}
 \begin{lstlisting}[basicstyle=\scriptsize\ttfamily,numbers=none,xleftmargin=0.7em,xrightmargin=.7em]
 ...
- if (x (?{\color{dkred}\textbf{\texttt{<}}}?) y)
-   return foo(x, z, y);
+ if (x < y)
+   return foo(x,(?{\color{dkred}z, y}?));
 \end{lstlisting}
 \end{subfigure}
 \begin{subfigure}{.45\columnwidth}
@@ -193,7 +193,7 @@ that may not generalize to other compilers.
 
 \begin{sloppypar}
 Our approach combats this cost by using the
-\texttt{Comby}\footnote{\href{https://comby.dev}{https://comby.dev}} tool~\cite{combypaper} to do
+\texttt{Comby} (\url{https://comby.dev}) tool~\cite{combypaper} to do
 syntax-aware code matching and transformation. \texttt{Comby} works by coarsely
 parsing a program, taking care to correctly interpret nested syntax of code
 (parentheses and braces), and avoids conflating this syntax with strings and
@@ -309,17 +309,13 @@ on-the-fly mutations, and in that sense less
 appealing than the string-level mutation. Our
 results in Section~\ref{eval} do show, however, that generative
 syntax-aware input manipulation demonstrates compelling utility despite
-incurring significant slowdown.\footnote{We are actively improving the tooling
-architecture, a matter of engineering rather than
-limitations on the inherent merits of the approach.}
+incurring significant slowdown.
 
 \subsubsection{P(havoc) + P(text) + P(splice) = 1}
 
 Our full implementation is based on Google's released code for the AFL
-fuzzer (\url{https://github.com/google/AFL}), and available as an open source tool (that, to date, has 68
-stars on GitHub, has been forked 7 times, and has external users who
-contact us).\footnote{Link omitted for
-  blinding.}  The main change to AFL is the addition of code such as that shown in
+fuzzer (\url{https://github.com/google/AFL}), and available as an open
+source tool at \url{https://github.com/agroce/afl-compiler-fuzzer}.  The main change to AFL is the addition of code such as that shown in
 Figure~\ref{fig:foperators}.  The new version (the ``AFL compiler
 fuzzer'') can also call out to {\tt comby} to generate mutants.  Two
 new command line parameters to AFL control the use of these features:
@@ -327,5 +323,5 @@ new command line parameters to AFL control the use of these features:
 fast C string implementation (with a default value of 75\%), and {\tt -2} determines the probability
 to call {\tt comby} to generate a mutant (with a default value of
 0\%).  If these two parameters add up to less than 100\%, the
-remainder of the time the usual stock AFL havoc mutation operators are
+remainder of the time the usual stock AFL havoc operators are
 applied; by default, this happens 25\% of the time.

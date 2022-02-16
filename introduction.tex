@@ -98,7 +98,7 @@ extensively tested that way.
 Unfortunately, ``no-fuss''
 fuzzing must make use of off-the-shelf \emph{fuzzing} tools,
 originally designed to find security vulnerabilities in inputs treated
-largely as byte-streams.  No-fuzz
+largely as byte-streams.  No-fuss
 fuzzing therefore
 suffers from two major drawbacks:
 
@@ -160,4 +160,6 @@ suffers from two major drawbacks:
   {\tt solc} compiler for Solidity code, we were the first to
   report a large number of serious bugs, despite extensive
   fuzzing  performed by the developers, OSS-Fuzz,
-  and external contributors.
+  and external contributors.  Our tool, based on Google's release of AFL, is available as open source at
+  \url{https://github.com/agroce/afl-compiler-fuzzer}, and to date has
+  more than 70 stars and multiple forks.
