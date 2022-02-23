@@ -9,9 +9,9 @@ extent these low-effort strategies demonstrate significant benefit in the
 domain of compiler fuzzing, and how they influence fuzzer behavior and
 performance.
 
-%Section~\ref{exp-setup} describes our experimental setup.
-%Section~\ref{exp-results} summarizes our results, which compares our strategies
-%against stock \texttt{AFL} and \texttt{AFL++} fuzzers on four actively-developed compilers. 
+Section~\ref{exp-setup} describes our experimental setup.
+Section~\ref{exp-results} summarizes our results comparing our strategies
+against stock \texttt{AFL} and \texttt{AFL++} fuzzers on four actively-developed compilers. 
 
 \subsection{Experimental Setup}
 \label{exp-setup}
@@ -111,8 +111,7 @@ Solidity, the base corpus decomposes into 9,308 templates and 7,651 concrete
 program fragments.  The other corpora are:
 \end{sloppypar}
 
-{\scriptsize
-\begin{table}[h!]
+{\begin{table}[h!]
 \centering
 \begin{tabular}{llrrr}
 \toprule
@@ -202,7 +201,7 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, with ~30GB free RAM.
                                      & \tt \small      splice-mutation             & 7.64    & 0         & 13          & 1.3            & 3.9              & 41.84\ph{a}       & 0.27 &  7.1            \\ 
 \bottomrule
 \end{tabular} 
-        \caption{Main results of controlled experiment. {\scriptsize We fuzzed each project for 14 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AFL++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
+        \caption{Main results of controlled experiment. {We fuzzed each project for 14 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AFL++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
 \texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a
 community-driven effort that enhances stock
 AFL. \texttt{text-mutation} applies fast string-based mutation operators (textual
