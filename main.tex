@@ -22,7 +22,7 @@
 %% in the same archive or directory.)
 %%
 %% The first command in your LaTeX source must be the \documentclass command.
-\documentclass[sigplan]{acmart}
+\documentclass[sigplan,screen]{acmart}
 
 \usepackage{code}
 \usepackage{graphicx}
@@ -39,30 +39,23 @@
 \tcbuselibrary{skins,breakable,listings}
 
 
-\author{Alex Groce}
-\affiliation{\institution{Northern Arizona University}\country{United States}}
-
-\author{Rijnard van Tonder}
-\affiliation{\institution{Sourcegraph, Inc.}\country{United States}}
-
-\author{Goutamkumar Tulajappa Kalburgi}
-\affiliation{\institution{Northern Arizona University}\country{United States}}
-
-\author{Claire Le Goues}
-\affiliation{\institution{Carnegie Mellon University}\country{United States}}
 
 
-%%% The following is specific to Onward! '21 and the paper
-%%% 'Let a Thousand Flowers Bloom: On the Uses of Diversity in Software Testing'
-%%% by Alex Groce.
+
+%%% The following is specific to CC '22 and the paper
+%%% 'Making No-Fuss Compiler Fuzzing Effective'
+%%% by Alex Groce, Rijnard van Tonder, Goutamkumar Tulajappa Kalburgi, and Claire Le Goues.
 %%%
-\copyrightyear{2022}
-\acmYear{2022}
-\setcopyright{acmcopyright}\acmConference[CC '22]{31st ACM SIGPLAN International Conference on Compiler Construction}{April 2--3, 2022}{Seoul, USA}
-\acmBooktitle{31st ACM SIGPLAN International Conference on Compiler Construction (CC '22), April 2--3, 2022, Seoul, USA}
+\setcopyright{acmcopyright}
 \acmPrice{15.00}
 \acmDOI{10.1145/3497776.3517765}
-\acmISBN{978-1-4503-9183-2/22/03}
+\acmYear{2022}
+\copyrightyear{2022}
+\acmSubmissionID{cc22main-p5-p}
+\acmISBN{978-1-4503-9183-2/22/04}
+\acmConference[CC '22]{Proceedings of the 31st ACM SIGPLAN International Conference on Compiler Construction}{April 02--03, 2022}{Seoul, South Korea}
+\acmBooktitle{Proceedings of the 31st ACM SIGPLAN International Conference on Compiler Construction (CC '22), April 02--03, 2022, Seoul, South Korea}
+
 
 
 \definecolor{LLGray}{gray}{0.87}
@@ -230,7 +223,7 @@
 %% other information printed in the page headers. This command allows
 %% the author to define a more concise list
 %% of authors' names for this purpose.
-\renewcommand{\shortauthors}{us folks}
+
 
 %% Table shortcuts
 \newcommand{\mr}[2]{\multirow{#1}{*}{#2}}
@@ -240,6 +233,18 @@
 \newcommand{\clg}[1]{\textcolor{blue}{#1}}
 \newcommand{\rvt}[1]{\textcolor{purple}{#1}}
 \newcommand{\kj}[1]{\textcolor{olive}{#1}}
+
+\author{Alex Groce}
+\affiliation{\institution{Northern Arizona University}\country{United States}}
+
+\author{Rijnard van Tonder}
+\affiliation{\institution{Sourcegraph, Inc.}\country{United States}}
+
+\author{Goutamkumar Tulajappa Kalburgi}
+\affiliation{\institution{Northern Arizona University}\country{United States}}
+
+\author{Claire Le Goues}
+\affiliation{\institution{Carnegie Mellon University}\country{United States}}
 
 %%
 %% The abstract is a short summary of the work to be presented in the

@@ -1,7 +1,12 @@
-\section{Non-Experimental Fuzzing Campaigns}
+\section{Non-experimental Fuzzing Campaigns}
 \label{real-world}
 
 \begin{table}
+\caption{Fuzzing campaign results for real world bugs. {
+\cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed but unfixed bugs}. 
+\acirc~is \textbf{duplicate bug reports}.
+\textbf{Total} is the number of true, unique bugs reported and acknowledged.}
+}
 \centering
 \begin{tabular}{lrr|rrr}
 \toprule
@@ -18,11 +23,7 @@
                     All               &            & \allUniqueFixedOrConfirmed       & \allUniqueFixed   & \allUniqueConfirmed     & \allValidDuplicates    \\
 \bottomrule
 \end{tabular}
-\caption{Fuzzing campaign results for real world bugs. {
-\cmark~is \textbf{fixed} bugs. \clock~is \textbf{confirmed but unfixed bugs}. 
-\acirc~is \textbf{duplicate bug reports}.
-\textbf{Total} is the number of true, unique bugs reported and acknowledged.}
-}
+
 \label{tab:campaign-fixes}
 \end{table}
 

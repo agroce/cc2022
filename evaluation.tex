@@ -112,6 +112,7 @@ program fragments.  The other corpora are:
 \end{sloppypar}
 
 {\begin{table}[h!]
+    \caption{Summary of input corpora for four compilers.}
 \centering
 \begin{tabular}{llrrr}
 \toprule
@@ -123,7 +124,7 @@ program fragments.  The other corpora are:
                     \mr{1}{Zig}       & compile-error tests           & 586               & 1,762         & 1,562      \\ 
 \bottomrule
 \end{tabular}
-\caption{Summary of input corpora for four compilers.}
+
 \label{tab:inputs}
 \end{table}
 \vspace{-1em}
@@ -173,6 +174,19 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, with ~30GB free RAM.
 
 
 \begin{table*}[t!]
+          \caption{Main results of controlled experiment. {We fuzzed each project for 14 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AFL++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
+\texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a
+community-driven effort that enhances stock
+AFL. \texttt{text-mutation} applies fast string-based mutation operators (textual
+find-replace patterns) with a probability of 75\% on every fuzzed
+input. Stock AFL manipulates the input the remaining 25\% of the
+time. \texttt{splice-mutation} is a hybrid approach that (1) applies
+mutation operators as in \texttt{text-mutation} with probability 33\%;
+(2) synthesizes a syntax-aware input with template (splice) with
+        probability 33\%; and (3) uses stock AFL the remaining 34\% of the time. 
+        $\dagger$The instrumentation for a more recent version
+        \texttt{3.15a} of \texttt{AFL++} differs from our baseline
+        version.}}
 \centering
 \begin{tabular}{llrrrrrrcc}
 \toprule
@@ -201,20 +215,7 @@ of Intel Xeon Gold 6240 2.6 GHz CPUs, with ~30GB free RAM.
                                      & \tt \small      splice-mutation             & 7.64    & 0         & 13          & 1.3            & 3.9              & 41.84\ph{a}       & 0.27 &  7.1            \\ 
 \bottomrule
 \end{tabular} 
-        \caption{Main results of controlled experiment. {We fuzzed each project for 14 trials (24 hours per trial) in different configurations: \texttt{baseline-AFL}, \texttt{AFL++},  \texttt{text-mutation}, and \texttt{splice-mutation}.
-\texttt{baseline-AFL} is stock \texttt{AFL}; \texttt{AFL++} is a
-community-driven effort that enhances stock
-AFL. \texttt{text-mutation} applies fast string-based mutation operators (textual
-find-replace patterns) with a probability of 75\% on every fuzzed
-input. Stock AFL manipulates the input the remaining 25\% of the
-time. \texttt{splice-mutation} is a hybrid approach that (1) applies
-mutation operators as in \texttt{text-mutation} with probability 33\%;
-(2) synthesizes a syntax-aware input with template (splice) with
-        probability 33\%; and (3) uses stock AFL the remaining 34\% of the time. 
-        $\dagger$The instrumentation for a more recent version
-        \texttt{3.15a} of \texttt{AFL++} differs from our baseline
-        version.}
-}
+
 \label{tab:results}
 \end{table*}
 
@@ -272,8 +273,12 @@ insights:
 \end{sloppypar}
 
 \begin{itemize}
-\item One of our strategies may not perform better than stock approaches. This is the case for Fe, where \\ \texttt{text-mutation} performs only on par with \texttt{AFL}. Here, \texttt{splice-mutation} is the only strategy to perform slightly better than other tools.
-\item One of our strategies may underperform compared to stock approaches. This is the case for Move, where \texttt{splice-mutation} performs worse than the baseline, \\ whereas \texttt{text-mutation} performs best.
+\item \begin{sloppypar}
+  One of our strategies may not perform better than stock approaches. This is the case for Fe, where \\ \texttt{text-mutation} performs only on par with \texttt{AFL}. Here, \texttt{splice-mutation} is the only strategy to perform slightly better than other tools.
+\item One of our strategies may underperform compared to stock
+  approaches. This is the case for Move, where
+  \texttt{splice-mutation} performs worse than the baseline, \\
+  whereas \texttt{text-mutation} performs best. \end{sloppypar}
 \end{itemize}
 
 \begin{sloppypar}
